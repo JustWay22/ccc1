@@ -1,0 +1,1 @@
+{"outputDirectory":"public","functions":{"api/[...all].js":{"maxDuration":120,"includeFiles":"public/**"}}}
