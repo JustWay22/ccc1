@@ -66,9 +66,12 @@ dialog::backdrop{background:rgba(0,0,0,.7)}dialog h3{margin-top:0}
 .err{color:#fb7185;font-size:13px;min-height:18px}.lnk{background:none;color:var(--ac);padding:8px 0 0;font-size:13px;width:100%}
 .pl{border:1px solid var(--bd);border-radius:14px;padding:12px;margin-bottom:10px;display:flex;flex-direction:column;gap:6px}.pl span{color:var(--mu);font-size:13px}
 .hint{display:block;color:var(--mu);margin:-6px 0 10px;font-size:12px}
+/* футер с реквизитами */
+#foot{padding:14px 18px;border-top:1px solid var(--bd);background:var(--pn);color:var(--mu);font-size:12px;line-height:1.7;flex-shrink:0}
+#foot b{color:var(--tx)}#foot .pay{color:var(--ac)}#foot a{color:var(--ac);text-decoration:none}#foot a:hover{text-decoration:underline}
 ::-webkit-scrollbar{width:8px}::-webkit-scrollbar-thumb{background:#2f2f3e;border-radius:8px}
 @media(max-width:760px){#side{position:fixed;inset:0 25% 0 0;z-index:5;transform:translateX(-100%);transition:transform .2s;width:auto}#side.open{transform:none}
-#menu,#xs{display:inline-block}#top{padding:10px}#home{padding:14px}#grid{grid-template-columns:repeat(2,1fr);gap:10px}.m{max-width:88%}header{padding:8px 10px}}
+#menu,#xs{display:inline-block}#top{padding:10px}#home{padding:14px}#grid{grid-template-columns:repeat(2,1fr);gap:10px}.m{max-width:88%}header{padding:8px 10px}#foot{padding:12px 14px;font-size:11px}}
 </style></head><body data-v="home">
 <div id="app">
 <nav id="side"><div class="logo"><b>✦ DreamChat</b><button class="g" id="xs">✕</button></div>
@@ -89,7 +92,14 @@ dialog::backdrop{background:rgba(0,0,0,.7)}dialog h3{margin-top:0}
 </div>
 <div id="msgs"></div>
 <form id="f"><input id="in" placeholder="Напиши сообщение…" autocomplete="off"><button type="button" class="g" id="ph" title="Попросить фото">🖼</button><button id="send">➤</button></form>
-</section></div></div>
+</section>
+<footer id="foot">
+<div><b>Владелец сайта:</b> Мамурин Илья Сергеевич</div>
+<div><b>Email:</b> <a href="mailto:88im.i.ila@gmail.com">88im.i.ila@gmail.com</a></div>
+<div><b>Телефон:</b> <a href="tel:+79829389064">+7 982 938-90-64</a></div>
+<div><b>Приём платежей:</b> <span class="pay">ЮMoney</span> · DREAMCHAT</div>
+</footer>
+</div></div>
 
 <dialog id="pf"><h3>👤 Мой профиль</h3>
 <p class="tag" style="text-align:left;margin-top:-6px">Персонажи увидят это и будут общаться с тобой, зная, кто ты.</p>
