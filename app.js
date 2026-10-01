@@ -45,6 +45,38 @@ function info(u){const pk=planOf(u),P=PLANS[pk],d=today(),key=P.per==='day'?d:d.
     photoLimit:P.ph===Infinity?-1:P.ph,photosLeft:P.ph===Infinity?-1:Math.max(0,P.ph-u.photos.n),photoPer:P.per}}
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 
+
+// ---- Общие помощники для генерации картинок ----
+async function llm(system,user,max=160,temp=.8){
+  const r=await fetch(BASE_URL.replace(/\/$/,'')+'/chat/completions',{method:'POST',
+    headers:{'Content-Type':'application/json',...(API_KEY&&{Authorization:'Bearer '+API_KEY})},
+    body:JSON.stringify({model:MODEL,temperature:temp,max_tokens:max,messages:[{role:'system',content:system},{role:'user',content:user}]})}).then(r=>r.json()).catch(()=>null);
+  return (r?.choices?.[0]?.message?.content||'').trim()}
+async function draw(p){ // Replicate: создаём задачу, ждём (до ~100 сек), сохраняем в хранилище. Возвращает {fn} или {code,error}
+  const rr=await fetch(`https://api.replicate.com/v1/models/${IMAGE_MODEL}/predictions`,{method:'POST',
+    headers:{Authorization:'Bearer '+REPL,'Content-Type':'application/json',Prefer:'wait=30'},
+    body:JSON.stringify({input:{prompt:p,aspect_ratio:'3:4',num_outputs:1,output_format:'jpg'}})});
+  let pj=await rr.json().catch(()=>({}));
+  if(!rr.ok)return{code:502,error:'Replicate: '+(pj.detail||pj.title||rr.status)};
+  const t0=Date.now();
+  while(!['succeeded','failed','canceled'].includes(pj.status)&&pj.urls?.get&&Date.now()-t0<100000){
+    await sleep(1500);pj=await fetch(pj.urls.get,{headers:{Authorization:'Bearer '+REPL}}).then(r=>r.json()).catch(()=>pj)}
+  if(pj.status==='failed'||pj.status==='canceled')return{code:502,error:'Replicate: '+(pj.error||'генерация не удалась')};
+  const out=Array.isArray(pj.output)?pj.output[0]:pj.output;
+  if(pj.status!=='succeeded'||!out)return{code:504,error:'сервис фото сейчас перегружен, попробуй ещё раз (лимит не потрачен)'};
+  const buf=Buffer.from(await (await fetch(out)).arrayBuffer()),fn=crypto.randomBytes(12).toString('hex')+'.jpg';
+  await kv.set('img:'+fn,buf.toString('base64'));
+  return{fn}}
+
+// ---- Общие чаты: публичные карточки персонажей (без переписок) лежат одним ключом pub:all ----
+const clip=(v,n)=>String(v==null?'':v).slice(0,n);
+const okImg=v=>{v=clip(v,500);return /^https:\/\/\S+$/i.test(v)||/^\/api\/img\/[a-f0-9]{24}\.jpg$/.test(v)?v:''};
+function cleanPub(c,owner){
+  const tone=Array.isArray(c.tone)&&c.tone.length===4?c.tone.map(x=>Math.max(0,Math.min(10,+x||0))):[5,5,3,5],tk=c.talk&&typeof c.talk==='object'?c.talk:{};
+  return{id:clip(c.id,20).replace(/[^a-z0-9]/gi,''),owner,name:clip(c.name,60).trim(),desc:clip(c.desc,1500),rules:clip(c.rules,1500),greet:clip(c.greet,500),
+    g:c.g==='m'?'m':'f',tags:clip(c.tags,200),img:okImg(c.img),astyle:c.astyle==='anime'?'anime':'real',tone,
+    talk:{st:clip(tk.st,20),em:clip(tk.em,20),ex:clip(tk.ex,300)},ts:Date.now()}}
+
 module.exports=async(req,res)=>{
   const url=req.url.split('?')[0],POST=req.method==='POST';
   try{
@@ -100,29 +132,41 @@ module.exports=async(req,res)=>{
         const inf=info(u);if(inf.photosLeft===0)return send(res,429,{error:'photo_limit',...inf});
         const {name='',desc='',g='f',style='anime',ctx=[],hint=''}=await body(req,2e5);
         // 1) текстовая модель пишет английский промпт (только безопасный контент), учитывая пожелание пользователя
-        const pr=await fetch(BASE_URL.replace(/\/$/,'')+'/chat/completions',{method:'POST',
-          headers:{'Content-Type':'application/json',...(API_KEY&&{Authorization:'Bearer '+API_KEY})},
-          body:JSON.stringify({model:MODEL,temperature:.8,max_tokens:160,messages:[
-            {role:'system',content:'Write ONE English image-generation prompt (max 70 words) for a photo the character sends in a chat. Adult character, safe for work, fully clothed, tasteful, no nudity. Describe appearance, clothes, pose, place, lighting. If the user asked for something specific, follow it as long as it stays safe for work. Output only the prompt.'},
-            {role:'user',content:`Character: ${name}, ${g==='m'?'male':'female'}. ${desc}\nUser request: ${String(hint).slice(0,300)||'(none, choose a fitting scene)'}\nRecent chat:\n${[].concat(ctx).slice(-6).join('\n')}`}]})}).then(r=>r.json()).catch(()=>null);
-        let p=(pr?.choices?.[0]?.message?.content||`${name}, ${desc}, ${hint}`).trim().slice(0,700);
-        p=(style==='real'?'realistic photo, natural light, smartphone selfie, ':'anime style illustration, high quality, ')+'adult, safe for work, fully clothed, '+p;
-        // 2) Replicate: создаём задачу и ждём (опрашиваем до ~100 секунд)
-        const rr=await fetch(`https://api.replicate.com/v1/models/${IMAGE_MODEL}/predictions`,{method:'POST',
-          headers:{Authorization:'Bearer '+REPL,'Content-Type':'application/json',Prefer:'wait=30'},
-          body:JSON.stringify({input:{prompt:p,aspect_ratio:'3:4',num_outputs:1,output_format:'jpg'}})});
-        let pj=await rr.json().catch(()=>({}));
-        if(!rr.ok)return send(res,502,{error:'Replicate: '+(pj.detail||pj.title||rr.status)});
-        const t0=Date.now();
-        while(!['succeeded','failed','canceled'].includes(pj.status)&&pj.urls?.get&&Date.now()-t0<100000){
-          await sleep(1500);pj=await fetch(pj.urls.get,{headers:{Authorization:'Bearer '+REPL}}).then(r=>r.json()).catch(()=>pj)}
-        if(pj.status==='failed'||pj.status==='canceled')return send(res,502,{error:'Replicate: '+(pj.error||'генерация не удалась')});
-        const out=Array.isArray(pj.output)?pj.output[0]:pj.output;
-        if(pj.status!=='succeeded'||!out)return send(res,504,{error:'сервис фото сейчас перегружен, попробуй ещё раз (лимит не потрачен)'});
-        const buf=Buffer.from(await (await fetch(out)).arrayBuffer()),fn=crypto.randomBytes(12).toString('hex')+'.jpg';
-        await kv.set('img:'+fn,buf.toString('base64'));
+        let p=(await llm('Write ONE English image-generation prompt (max 70 words) for a photo the character sends in a chat. Adult character, safe for work, fully clothed, tasteful, no nudity. Describe appearance, clothes, pose, place, lighting. If the user asked for something specific, follow it as long as it stays safe for work. Output only the prompt.',
+          `Character: ${name}, ${g==='m'?'male':'female'}. ${desc}\nUser request: ${String(hint).slice(0,300)||'(none, choose a fitting scene)'}\nRecent chat:\n${[].concat(ctx).slice(-6).join('\n')}`))||`${name}, ${desc}, ${hint}`;
+        p=(style==='real'?'realistic photo, natural light, smartphone selfie, ':'anime style illustration, high quality, ')+'adult, safe for work, fully clothed, '+p.slice(0,700);
+        // 2) Replicate
+        const R=await draw(p);if(R.error)return send(res,R.code,{error:R.error});
         u.photos.n++;await saveU(u);
-        return send(res,200,{url:'/api/img/'+fn,...info(u)});
+        return send(res,200,{url:'/api/img/'+R.fn,...info(u)});
+      }
+      if(url==='/api/avatar'&&POST){ // аватарка при создании персонажа. Тратит 1 фото из лимита
+        if(!REPL)return send(res,503,{error:'генерация фото не настроена (нет REPLICATE_API_TOKEN)'});
+        const inf=info(u);if(inf.photosLeft===0)return send(res,429,{error:'photo_limit',...inf});
+        const {name='',desc='',g='f',style='anime',hint=''}=await body(req,2e5);
+        let p=(await llm('Write ONE English image-generation prompt (max 60 words) for a character avatar: a portrait, head and shoulders, face clearly visible, centered. Adult character, safe for work, fully clothed, tasteful, no nudity. Describe hair, eyes, expression, clothes, background, lighting. If the user described the look they want, follow it as long as it stays safe for work. If they gave no description, invent a fitting look from the character description. Output only the prompt.',
+          `Character: ${String(name).slice(0,60)}, ${g==='m'?'male':'female'}. ${String(desc).slice(0,800)}\nUser wishes for the avatar: ${String(hint).slice(0,400)||'(none, choose by yourself)'}`,140))||`${name}, ${String(desc).slice(0,300)}, ${hint}`;
+        p=(style==='real'?'realistic portrait photo, natural light, ':'anime style character portrait illustration, high quality, ')+'adult, safe for work, fully clothed, '+p.slice(0,700);
+        const R=await draw(p);if(R.error)return send(res,R.code,{error:R.error});
+        u.photos.n++;await saveU(u);
+        return send(res,200,{url:'/api/img/'+R.fn,...info(u)});
+      }
+      if(url==='/api/public'&&!POST){ // список общих персонажей (без переписок и без владельцев)
+        const all=(await kv.get('pub:all'))||[];
+        return send(res,200,all.map(({owner,...c})=>({...c,mine:owner===u.id})));
+      }
+      if(url==='/api/public'&&POST){ // опубликовать / обновить своего персонажа
+        const {char={}}=await body(req,2e5),c=cleanPub(char,u.id);
+        if(!/^[a-z0-9]{5,20}$/i.test(c.id)||!c.name)return send(res,400,{error:'Нужны имя и корректный id'});
+        const all=(await kv.get('pub:all'))||[],i=all.findIndex(x=>x.id===c.id);
+        if(i>=0){if(all[i].owner!==u.id)return send(res,403,{error:'Это не твой персонаж'});all[i]=c}
+        else{if(all.filter(x=>x.owner===u.id).length>=30)return send(res,400,{error:'Можно опубликовать не больше 30 персонажей'});all.unshift(c);if(all.length>1000)all.length=1000}
+        await kv.set('pub:all',all);return send(res,200,{ok:1});
+      }
+      if(url==='/api/public/delete'&&POST){ // убрать своего персонажа из общих (у других сохранятся их копии с историей)
+        const {id=''}=await body(req,1e3),all=(await kv.get('pub:all'))||[],c=all.find(x=>x.id===id);
+        if(c&&c.owner!==u.id)return send(res,403,{error:'Это не твой персонаж'});
+        if(c)await kv.set('pub:all',all.filter(x=>x.id!==id));return send(res,200,{ok:1});
       }
       return send(res,404,{error:'not found'});
     }
