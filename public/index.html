@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>DreamChat</title>
+<title>BestyChat</title>
 <style>
 :root{--bg:#0e0e13;--pn:#16161d;--pn2:#1f1f2a;--bd:#2a2a37;--tx:#ececf3;--mu:#8f8fa6;--ac:#8b5cf6;--ac2:#ec4899;--grad:linear-gradient(135deg,#8b5cf6,#ec4899);color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{height:100%;margin:0}
@@ -58,24 +58,20 @@ header .t{flex:1;min-width:0}header .t small{color:var(--mu);display:block;white
 #f input{margin:0;flex:1;border-radius:999px;padding:12px 18px}#send,#ph{border-radius:50%;width:46px;height:46px;padding:0;font-size:17px}
 .empty{margin:auto;text-align:center;color:var(--mu);padding:20px}
 /* окна */
-dialog{border:1px solid var(--bd);border-radius:18px;background:var(--pn);color:var(--tx);max-width:460px;width:92%;padding:22px;max-height:92vh;overflow:auto}
-.avb{display:flex;gap:12px;align-items:flex-start;margin:6px 0 4px}.avb>div:last-child{flex:1;min-width:0}.avb textarea{margin:0 0 8px}.avb select{margin:0 0 8px}.avb button{width:100%}
+dialog{border:1px solid var(--bd);border-radius:18px;background:var(--pn);color:var(--tx);max-width:460px;width:92%;padding:22px}
 dialog::backdrop{background:rgba(0,0,0,.7)}dialog h3{margin-top:0}
 .brand{font-size:26px;font-weight:800;text-align:center;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
 .tag{text-align:center;color:var(--mu);margin:2px 0 14px}.row{display:flex;gap:8px;justify-content:flex-end}
 .err{color:#fb7185;font-size:13px;min-height:18px}.lnk{background:none;color:var(--ac);padding:8px 0 0;font-size:13px;width:100%}
 .pl{border:1px solid var(--bd);border-radius:14px;padding:12px;margin-bottom:10px;display:flex;flex-direction:column;gap:6px}.pl span{color:var(--mu);font-size:13px}
 .hint{display:block;color:var(--mu);margin:-6px 0 10px;font-size:12px}
-/* футер с реквизитами */
-#foot{padding:14px 18px;border-top:1px solid var(--bd);background:var(--pn);color:var(--mu);font-size:12px;line-height:1.7;flex-shrink:0}
-#foot b{color:var(--tx)}#foot .pay{color:var(--ac)}#foot a{color:var(--ac);text-decoration:none}#foot a:hover{text-decoration:underline}
 ::-webkit-scrollbar{width:8px}::-webkit-scrollbar-thumb{background:#2f2f3e;border-radius:8px}
 @media(max-width:760px){#side{position:fixed;inset:0 25% 0 0;z-index:5;transform:translateX(-100%);transition:transform .2s;width:auto}#side.open{transform:none}
-#menu,#xs{display:inline-block}#top{padding:10px}#home{padding:14px}#grid{grid-template-columns:repeat(2,1fr);gap:10px}.m{max-width:88%}header{padding:8px 10px}#foot{padding:12px 14px;font-size:11px}}
+#menu,#xs{display:inline-block}#top{padding:10px}#home{padding:14px}#grid{grid-template-columns:repeat(2,1fr);gap:10px}.m{max-width:88%}header{padding:8px 10px}}
 </style></head><body data-v="home">
 <div id="app">
-<nav id="side"><div class="logo"><b>✦ DreamChat</b><button class="g" id="xs">✕</button></div>
-<button class="nv on" id="nh">🏠 Главная</button><button class="nv" id="nc">💬 Мои чаты</button><button class="nv" id="nu">🌐 Общие чаты</button><button class="nv" id="nn">➕ Создать персонажа</button><button class="nv" id="np">👤 Мой профиль</button><button class="nv" id="nsub">⭐ Тарифы</button>
+<nav id="side"><div class="logo"><b>✦ BestyChat</b><button class="g" id="xs">✕</button></div>
+<button class="nv on" id="nh">🏠 Главная</button><button class="nv" id="nc">💬 Мои чаты</button><button class="nv" id="nn">➕ Создать персонажа</button><button class="nv" id="np">👤 Мой профиль</button><button class="nv" id="nsub">⭐ Тарифы</button>
 <div id="me"></div><button class="g" id="out">Выйти</button></nav>
 <div id="wrap">
 <div id="top"><button class="g" id="menu">☰</button><input id="q" placeholder="Поиск персонажей…" autocomplete="off"><span id="tav" title="Мой профиль"></span></div>
@@ -92,14 +88,7 @@ dialog::backdrop{background:rgba(0,0,0,.7)}dialog h3{margin-top:0}
 </div>
 <div id="msgs"></div>
 <form id="f"><input id="in" placeholder="Напиши сообщение…" autocomplete="off"><button type="button" class="g" id="ph" title="Попросить фото">🖼</button><button id="send">➤</button></form>
-</section>
-<footer id="foot">
-<div><b>Владелец сайта:</b> Мамурин Илья Сергеевич</div>
-<div><b>Email:</b> <a href="mailto:88im.i.ila@gmail.com">88im.i.ila@gmail.com</a></div>
-<div><b>Телефон:</b> <a href="tel:+79829389064">+7 982 938-90-64</a></div>
-<div><b>Приём платежей:</b> <span class="pay">ЮMoney</span> · DREAMCHAT</div>
-</footer>
-</div></div>
+</section></div></div>
 
 <dialog id="pf"><h3>👤 Мой профиль</h3>
 <p class="tag" style="text-align:left;margin-top:-6px">Персонажи увидят это и будут общаться с тобой, зная, кто ты.</p>
@@ -116,34 +105,24 @@ dialog::backdrop{background:rgba(0,0,0,.7)}dialog h3{margin-top:0}
 <label>Имя</label><input id="cn" required>
 <label>Кто это (внешность, возраст 18+, характер, история)</label><textarea id="cd" rows="3"></textarea>
 <label>Что может делать и как должен отвечать</label><textarea id="cr" rows="3" placeholder="Например: отвечает кратко, дразнит, использует эмодзи…"></textarea>
-<label>Манера общения</label><select id="cst"><option value="">По описанию (по умолчанию)</option><option value="anime">Как аниме-персонаж (эмоционально, «ня», -тян/-кун)</option><option value="cute">Милый и ласковый</option><option value="casual">Как обычный человек в мессенджере</option><option value="rude">Дерзкий, с сарказмом</option><option value="serious">Серьёзный и сдержанный</option><option value="formal">Деловой, вежливый, на «вы»</option></select>
-<label>Эмодзи и смайлики</label><select id="cem"><option value="">По умолчанию</option><option value="none">Совсем без смайликов</option><option value="few">Редко</option><option value="many">Много</option></select>
-<label>Особенности речи (необязательно)</label><input id="cex" maxlength="300" placeholder="Например: слегка заикается, говорит о себе в третьем лице">
 <label>Теги через запятую</label><input id="ctg" placeholder="подруга, дерзкая, аниме">
 <label>Пол персонажа</label><select id="cgd"><option value="f">Женский</option><option value="m">Мужской</option></select>
-<label>Аватарка персонажа</label>
-<div class="avb"><div id="cprev"></div><div>
-<textarea id="cah" rows="2" maxlength="400" placeholder="Опиши внешность: волосы, одежда, фон… Можно оставить пустым, тогда нейросеть придумает сама по описанию персонажа"></textarea>
-<select id="cas"><option value="anime">Стиль: аниме</option><option value="real">Стиль: реалистичное фото</option></select>
-<button type="button" id="cag">🎨 Сгенерировать аватарку</button></div></div>
-<div class="err" id="caerr"></div>
-<label>…или вставь прямую ссылку на фото (необязательно)</label><input id="ci" placeholder="https://i.postimg.cc/.../photo.png">
-<small class="hint">Генерация тратит 1 фото из твоего лимита. Свою картинку можно загрузить на postimg.cc и вставить «Прямую ссылку».</small>
+<label>Фото персонажа — прямая ссылка (необязательно)</label><input id="ci" placeholder="https://i.postimg.cc/.../photo.png">
+<small class="hint">Как получить: 1) открой postimg.cc и загрузи фото; 2) скопируй «Прямая ссылка» (Direct link, оканчивается на .png/.jpg); 3) вставь сюда.</small>
 <label>Приветствие (необязательно)</label><input id="cg">
-<label id="cpubw" style="display:flex;gap:8px;align-items:flex-start;margin:0 0 12px"><input type="checkbox" id="cpub" style="width:auto;margin:3px 0 0"><span>Опубликовать в «Общие чаты». Другие увидят имя, описание, теги и аватарку, а переписка останется только у тебя.</span></label>
-<div class="row"><button type="button" class="g" id="cdel" style="display:none;margin-right:auto">Удалить</button><button type="button" class="g" id="cc">Отмена</button><button type="submit" id="csv">Сохранить</button></div></form></dialog>
+<div class="row"><button type="button" class="g" id="cdel" style="display:none;margin-right:auto">Удалить</button><button type="button" class="g" id="cc">Отмена</button><button type="submit">Сохранить</button></div></form></dialog>
 
 <dialog id="age"><h3>Режим 18+</h3>
 <p>Включая его, ты подтверждаешь, что тебе исполнилось 18 лет. Все персонажи — только взрослые. Допускается откровенный флирт и романтика без графических сексуальных описаний.</p>
 <div class="row"><button class="g" id="an">Отмена</button><button id="ay">Мне 18+</button></div></dialog>
-<dialog id="auth"><div class="brand">✦ DreamChat</div><div class="tag">Живые персонажи, которые тебя помнят</div><h3 id="at" style="margin:0 0 8px">Вход</h3>
+<dialog id="auth"><div class="brand">✦ BestyChat</div><div class="tag">Живые персонажи, которые тебя помнят</div><h3 id="at" style="margin:0 0 8px">Вход</h3>
 <label>Логин</label><input id="al" autocomplete="username"><label>Пароль (от 6 символов)</label><input id="ap" type="password" autocomplete="current-password">
 <div class="err" id="aerr"></div><button id="ago" style="width:100%">Войти</button><button class="lnk" id="asw"></button></dialog>
 <dialog id="sub"><h3>⭐ Тарифы</h3>
 <div class="pl"><b>Plus · 499 ₽/мес</b><span>Полный доступ, без лимита сообщений. До 30 фото в месяц.</span><button data-plan="plus">Выбрать Plus</button></div>
 <div class="pl"><b>VIP · 990 ₽/мес</b><span>Развёрнутые ответы персонажей. До 200 фото в месяц.</span><button data-plan="vip">Выбрать VIP</button></div>
 <div class="pl"><b>SUPER · 2990 ₽/мес</b><span>Никаких ограничений.</span><button data-plan="super">Выбрать SUPER</button></div>
-<p class="tag" style="margin:10px 0">Сейчас тарифы включаются бесплатно, оплату (ЮMoney) подключим позже. Бесплатно: 25 сообщений и 3 фото в день.</p>
+<p class="tag" style="margin:10px 0">Оплата через ЮKassa: банковские карты, СБП и другие способы. Тариф действует 30 дней. Бесплатно: 25 сообщений и 3 фото в день.</p>
 <div class="row"><button class="g" id="sn">Закрыть</button></div></dialog>
 <dialog id="pd"><h3>🖼 Какое фото?</h3>
 <label>Опиши, что хочешь: одежда, поза, место. Можно оставить пустым, тогда персонаж выберет сам.</label>
@@ -153,17 +132,14 @@ dialog::backdrop{background:rgba(0,0,0,.7)}dialog h3{margin-top:0}
 <script>
 const $=id=>document.getElementById(id);
 const DEF=[
-{id:'mia',name:'Мия',g:'f',desc:'Взрослая (22) дерзкая подруга с тёплым сердцем.',rules:'Отвечает живо и коротко, шутит, иногда дразнит.',greet:'Привет! Ну что, рассказывай, как день? 😏',tone:[5,5,3,6],talk:{st:'casual',em:'few',ex:''},style:'anime',tags:'подруга, дерзкая, юмор',
+{id:'mia',name:'Мия',g:'f',desc:'Взрослая (22) дерзкая подруга с тёплым сердцем.',rules:'Отвечает живо и коротко, шутит, иногда дразнит.',greet:'Привет! Ну что, рассказывай, как день? 😏',tone:[5,5,3,6],style:'anime',tags:'подруга, дерзкая, юмор',
  img:'https://i.postimg.cc/FKScBkhy/Chat-GPT-Image-1-okt-2026-g-00-03-43.png',img2:'https://i.postimg.cc/KYbvm1nQ/Chat-GPT-Image-1-okt-2026-g-00-07-15.png'},
-{id:'kai',name:'Кай',g:'m',desc:'Взрослый (21) застенчивый фембой в гольфах, любит аниме.',rules:'Смущается, говорит мягко, добавляет эмодзи, постепенно раскрепощается.',greet:'А-а, привет… я тут немного волнуюсь 🥺',tone:[8,8,4,3],talk:{st:'cute',em:'many',ex:''},style:'anime',tags:'фембой, застенчивый, аниме',
+{id:'kai',name:'Кай',g:'m',desc:'Взрослый (21) застенчивый фембой в гольфах, любит аниме.',rules:'Смущается, говорит мягко, добавляет эмодзи, постепенно раскрепощается.',greet:'А-а, привет… я тут немного волнуюсь 🥺',tone:[8,8,4,3],style:'anime',tags:'фембой, застенчивый, аниме',
  img:'https://i.postimg.cc/6Q6qd7y2/Chat-GPT-Image-1-okt-2026-g-00-09-11.png',img2:'https://i.postimg.cc/wxNqR50F/Chat-GPT-Image-1-okt-2026-g-00-10-50.png'}];
-let S={chars:[],cur:null,adult:false,profile:null},TOK=localStorage.getItem('dct')||'',ME=null,tmr,regMode=false,V='home',FILT='all',Q='',PUB=[],PUBIDS=new Set();
+let S={chars:[],cur:null,adult:false,profile:null},TOK=localStorage.getItem('dct')||'',ME=null,tmr,regMode=false,V='home',FILT='all',Q='';
 const uid=()=>Math.random().toString(36).slice(2,9);
 const cur=()=>S.chars.find(c=>c.id===S.cur);
-const isDef=c=>DEF.some(d=>d.id===c.id),isMine=c=>!isDef(c)&&!c.pub;
-const allChars=()=>{const have=new Set(S.chars.map(c=>c.id));return S.chars.concat(PUB.filter(p=>!have.has(p.id)).map(p=>({...p,msgs:[],virt:true})))};
-async function loadPub(){try{const r=await api('/api/public');if(!r.ok)return;PUB=await r.json();PUBIDS=new Set(PUB.map(p=>p.id));
-  PUB.forEach(p=>{const c=S.chars.find(x=>x.id===p.id);if(c&&c.pub&&!p.mine)['name','desc','rules','greet','g','tags','img','talk','astyle'].forEach(k=>c[k]=p[k])})}catch(e){}}
+const isDef=c=>DEF.some(d=>d.id===c.id);
 const api=(p,o={})=>fetch(p,{...o,headers:{'Content-Type':'application/json',...(TOK&&{Authorization:'Bearer '+TOK})}});
 function save(){clearTimeout(tmr);tmr=setTimeout(()=>api('/api/state',{method:'PUT',body:JSON.stringify(S)}).catch(()=>{}),500)}
 const age=()=>+((S.profile||{}).age)||0, adultOn=()=>S.adult&&age()>=18;
@@ -185,7 +161,11 @@ async function refreshMe(){try{const r=await api('/api/me');if(r.status===401)re
   $('me').textContent='👤 '+ME.login+' · '+ME.planName+' · '+(ME.left<0?'сообщения ∞':'сообщений '+ME.left+'/'+ME.limit)+' · '+(ME.photosLeft<0?'фото ∞':'фото '+ME.photosLeft+'/'+ME.photoLimit+(ME.photoPer==='month'?' в мес.':' в день'));
   $('nsub').textContent=ME.sub?'⭐ Сменить тариф':'⭐ Тарифы'}catch(e){}}
 $('nsub').onclick=()=>{$('side').classList.remove('open');$('sub').showModal()};$('sn').onclick=()=>$('sub').close();
-document.querySelectorAll('[data-plan]').forEach(b=>b.onclick=async()=>{const r=await api('/api/subscribe',{method:'POST',body:JSON.stringify({plan:b.dataset.plan})});const j=await r.json().catch(()=>({}));if(!r.ok)return alert(j.error||'Ошибка '+r.status);$('sub').close();refreshMe()});
+document.querySelectorAll('[data-plan]').forEach(b=>b.onclick=async()=>{const r=await api('/api/subscribe',{method:'POST',body:JSON.stringify({plan:b.dataset.plan})});const j=await r.json().catch(()=>({}));if(!r.ok)return alert(j.error||'Ошибка '+r.status);if(j.confirmation_url){location.href=j.confirmation_url;return}$('sub').close();refreshMe()});
+async function checkPay(){if(!TOK)return;for(let i=0;i<6;i++){const r=await api('/api/pay/check',{method:'POST'}),j=await r.json().catch(()=>({}));
+  if(j.status==='succeeded'){await refreshMe();return alert('Оплата прошла! Тариф '+j.planName+' активен 🎉')}
+  if(j.status==='canceled')return alert('Платёж отменён');if(j.status==='none')return;await new Promise(r=>setTimeout(r,2500))}
+  alert('Платёж ещё обрабатывается. Тариф включится автоматически, обнови страницу через минуту.')}
 
 /* ---------- мой профиль (персона) ---------- */
 function openPf(){const p=S.profile||{};$('pfn').value=p.name||'';$('pfa').value=p.age||'';$('pfg').value=p.g||'';$('pfb').value=p.about||'';$('pfi').value=p.img||'';$('side').classList.remove('open');$('pf').showModal()}
@@ -208,31 +188,31 @@ const ava=(c,s)=>pic(av(c),c.name,s);
 function renderTop(){const p=S.profile||{};$('tav').replaceChildren(pic(p.img,p.name||(ME&&ME.login),38))}
 
 function merge(){DEF.forEach(d=>{const c=S.chars.find(x=>x.id===d.id);
-  if(!c)S.chars.push({...JSON.parse(JSON.stringify(d)),msgs:[]});else{if(!c.custImg){c.img=d.img;c.img2=d.img2}c.style=c.style||'anime';if(c.tags==null)c.tags=d.tags;if(c.talk==null)c.talk=d.talk}});
+  if(!c)S.chars.push({...JSON.parse(JSON.stringify(d)),msgs:[]});else{if(!c.custImg){c.img=d.img;c.img2=d.img2}c.style=c.style||'anime';if(c.tags==null)c.tags=d.tags}});
   if(!S.chars.find(c=>c.id===S.cur))S.cur=S.chars[0].id}
 
 /* ---------- каталог ---------- */
 function setV(v){V=v;document.body.dataset.v=v;$('side').classList.remove('open');
-  const on={nh:v==='home'&&FILT!=='chats'&&FILT!=='pub',nc:v==='home'&&FILT==='chats',nu:v==='home'&&FILT==='pub'};Object.keys(on).forEach(i=>$(i).classList.toggle('on',on[i]));v==='home'?renderHome():render()}
+  ['nh','nc'].forEach(i=>$(i).classList.toggle('on',v==='home'&&(i==='nc')===(FILT==='chats')));v==='home'?renderHome():render()}
 function cover(c){const w=document.createElement('div'),u=av(c);w.className='im';
   const L=()=>{const e=document.createElement('div');e.className='ph0';e.textContent=(c.name||'?')[0];return e};
   if(u){const i=document.createElement('img');i.src=u;i.loading='lazy';i.referrerPolicy='no-referrer';i.onerror=()=>i.replaceWith(L());w.append(i)}else w.append(L());
   const n=document.createElement('div');n.className='nm';n.textContent=c.name;w.append(n);return w}
 function renderHome(){renderTop();
-  const F=[['all','Все'],['chats','Мои чаты'],['f','Девушки'],['m','Парни'],['pub','🌐 Общие'],['mine','Созданные мной']];
+  const F=[['all','Все'],['chats','Мои чаты'],['f','Девушки'],['m','Парни'],['mine','Созданные мной']];
   $('chips').replaceChildren(...F.map(([k,t])=>{const b=document.createElement('button');b.className='chip'+(FILT===k?' on':'');b.textContent=t;b.onclick=()=>{FILT=k;setV('home')};return b}));
-  $('ht').textContent=FILT==='chats'?'Мои чаты':FILT==='pub'?'🌐 Общие чаты':'Персонажи';
-  const q=Q.toLowerCase(),list=allChars().filter(c=>{if(q&&!(c.name+' '+(c.desc||'')+' '+(c.tags||'')).toLowerCase().includes(q))return false;
-    return FILT==='chats'?c.msgs.length>0:FILT==='f'?c.g==='f':FILT==='m'?c.g==='m':FILT==='mine'?isMine(c)&&!c.virt:FILT==='pub'?PUBIDS.has(c.id):true});
+  $('ht').textContent=FILT==='chats'?'Мои чаты':'Персонажи';
+  const q=Q.toLowerCase(),list=S.chars.filter(c=>{if(q&&!(c.name+' '+(c.desc||'')+' '+(c.tags||'')).toLowerCase().includes(q))return false;
+    return FILT==='chats'?c.msgs.length>0:FILT==='f'?c.g==='f':FILT==='m'?c.g==='m':FILT==='mine'?!isDef(c):true});
   const g=$('grid');g.replaceChildren();
-  if(!list.length){const e=document.createElement('div');e.className='empty';e.textContent=FILT==='chats'?'Пока нет чатов — выбери персонажа и напиши ему':FILT==='pub'?'Пока никто не опубликовал персонажей':'Ничего не найдено';g.append(e)}
+  if(!list.length){const e=document.createElement('div');e.className='empty';e.textContent=FILT==='chats'?'Пока нет чатов — выбери персонажа и напиши ему':'Ничего не найдено';g.append(e)}
   list.forEach(c=>{const d=document.createElement('div');d.className='card';d.append(cover(c));
     const b=document.createElement('div'),p=document.createElement('p'),n=document.createElement('div');b.className='cb';p.textContent=c.desc||'';
     (c.tags||'').split(',').map(x=>x.trim()).filter(Boolean).slice(0,3).forEach(t=>{const s=document.createElement('span');s.className='tg';s.textContent=t;b.append(s)});
-    n.className='cnt';n.textContent='💬 '+c.msgs.length+(PUBIDS.has(c.id)?' · 🌐':'');b.prepend(p);b.append(n);d.append(b);
-    d.onclick=()=>{let x=c;if(c.virt){const{virt,mine,...r}=c;x={...r,pub:!mine,pubOn:!!mine,tone:r.tone||[5,5,3,5],msgs:[]};S.chars.push(x)}S.cur=x.id;save();setV('chat')};g.append(d)})}
+    n.className='cnt';n.textContent='💬 '+c.msgs.length;b.prepend(p);b.append(n);d.append(b);
+    d.onclick=()=>{S.cur=c.id;save();setV('chat')};g.append(d)})}
 $('q').oninput=e=>{Q=e.target.value;if(V!=='home')setV('home');else renderHome()};
-$('nh').onclick=()=>{FILT='all';Q='';$('q').value='';setV('home')};$('nc').onclick=()=>{FILT='chats';setV('home')};$('nu').onclick=()=>{FILT='pub';Q='';$('q').value='';setV('home')};
+$('nh').onclick=()=>{FILT='all';Q='';$('q').value='';setV('home')};$('nc').onclick=()=>{FILT='chats';setV('home')};
 $('bk').onclick=()=>setV('home');
 $('menu').onclick=()=>$('side').classList.add('open');$('xs').onclick=()=>$('side').classList.remove('open');
 
@@ -245,7 +225,7 @@ function renderMsgs(){const c=cur(),box=$('msgs');box.innerHTML='';
     if(m.img){const im=document.createElement('img');im.className='ph';im.src=m.img;im.onclick=()=>window.open(m.img);d.append(im);d.classList.add('pic')}
     if(m.r==='b'){const w=document.createElement('div');w.className='br';w.append(ava(c,34),d);box.append(w)}else box.append(d)});box.scrollTop=box.scrollHeight}
 function render(){const c=cur();$('hn').textContent=c.name;$('hd').textContent=c.desc||'';$('hav').replaceChildren(ava(c,40));renderTop();
-  $('ed').style.display=c.pub?'none':'';$('st').style.display=c.img&&c.img2?'':'none';$('st').textContent=c.style==='real'?'🎨 Аниме':'🧑 Реал';
+  $('st').style.display=c.img&&c.img2?'':'none';$('st').textContent=c.style==='real'?'🎨 Аниме':'🧑 Реал';
   c.tone=c.tone||[5,5,3,5];[1,2,3,4].forEach(i=>{$('t'+i).value=c.tone[i-1];$('v'+i).textContent=c.tone[i-1]});$('adult').checked=adultOn();renderMsgs()}
 $('st').onclick=()=>{const c=cur();c.style=c.style==='real'?'anime':'real';save();render()};
 [1,2,3,4].forEach(i=>$('t'+i).oninput=e=>{cur().tone[i-1]=+e.target.value;$('v'+i).textContent=e.target.value;save()});
@@ -254,52 +234,28 @@ $('adult').onchange=e=>{if(e.target.checked){e.target.checked=false;if(age()<18)
 $('ay').onclick=()=>{S.adult=true;$('adult').checked=true;save();$('age').close()};$('an').onclick=()=>$('age').close();
 
 /* ---------- создание / правка персонажа ---------- */
-let editing=null,agen=false;
-const IMG_OK=v=>/^(https:\/\/\S+|\/api\/img\/[a-f0-9]{24}\.jpg)$/i.test(v);
-function prevImg(){$('cprev').replaceChildren(pic($('ci').value.trim(),$('cn').value,72))}
+let editing=null;
 function openEd(c){editing=c;$('cn').value=c?c.name:'';$('cd').value=c?c.desc:'';$('cr').value=c?c.rules:'';$('cg').value=c?c.greet:'';$('ctg').value=c&&c.tags?c.tags:'';$('cgd').value=c&&c.g?c.g:'f';$('ci').value=c&&c.img?c.img:'';
-  const t=(c&&c.talk)||{};$('cst').value=t.st||'';$('cem').value=t.em||'';$('cex').value=t.ex||'';
-  $('cah').value='';$('cas').value=(c&&c.astyle)||'anime';$('caerr').textContent='';$('cag').textContent='🎨 Сгенерировать аватарку';
-  $('cpub').checked=c?!!c.pubOn:true;$('cpubw').style.display=c&&isDef(c)?'none':'';
-  $('cdel').style.display=c&&!isDef(c)?'':'none';prevImg();$('side').classList.remove('open');$('dlg').showModal()}
+  $('cdel').style.display=c&&!isDef(c)?'':'none';$('side').classList.remove('open');$('dlg').showModal()}
 $('nn').onclick=()=>openEd(null);$('ed').onclick=()=>openEd(cur());$('cc').onclick=()=>$('dlg').close();
-$('cn').oninput=prevImg;$('ci').oninput=prevImg;
-async function genAvatar(){if(agen)return false;agen=true;$('cag').disabled=$('csv').disabled=true;$('cag').textContent='⏳ Рисую (до минуты)…';$('caerr').textContent='';let ok=false;
-  try{const r=await api('/api/avatar',{method:'POST',body:JSON.stringify({name:$('cn').value.trim(),desc:$('cd').value,g:$('cgd').value,style:$('cas').value,hint:$('cah').value.trim()})});
-    const j=await r.json().catch(()=>({}));
-    if(r.ok){$('ci').value=j.url;prevImg();ok=true;refreshMe()}
-    else $('caerr').textContent=j.error==='photo_limit'?'Лимит фото исчерпан. Вставь ссылку или попробуй позже':r.status===401?'Нужно войти заново':(j.error||'Ошибка '+r.status)}
-  catch(e){$('caerr').textContent='Нет связи с сервером: '+e.message}
-  agen=false;$('cag').disabled=$('csv').disabled=false;$('cag').textContent=ok?'🎨 Сгенерировать заново':'🎨 Сгенерировать аватарку';return ok}
-$('cag').onclick=genAvatar;
-async function syncPub(c,on){try{
-  if(on){const r=await api('/api/public',{method:'POST',body:JSON.stringify({char:{id:c.id,name:c.name,desc:c.desc,rules:c.rules,greet:c.greet,g:c.g,tags:c.tags,img:c.img,astyle:c.astyle,tone:c.tone,talk:c.talk}})});
-    if(!r.ok){const j=await r.json().catch(()=>({}));c.pubOn=false;save();alert('Не удалось опубликовать: '+(j.error||r.status))}}
-  else await api('/api/public/delete',{method:'POST',body:JSON.stringify({id:c.id})})}catch(e){}
-  await loadPub();if(V==='home')renderHome()}
-$('cdel').onclick=()=>{if(confirm('Удалить персонажа вместе с перепиской?')){const d=editing;S.chars=S.chars.filter(x=>x!==d);S.cur=S.chars[0].id;save();$('dlg').close();setV('home');if(d.pubOn)syncPub(d,false)}};
-$('cf').onsubmit=async e=>{e.preventDefault();if(agen)return;let img=$('ci').value.trim();
-  if(img&&!IMG_OK(img)){alert('Нужна прямая ссылка на фото, начинается с https://');return}
-  if(!img&&!editing&&ME&&ME.photosLeft!==0&&confirm('Аватарка не задана. Сгенерировать автоматически по описанию персонажа?\n(будет потрачено 1 фото из лимита)')){await genAvatar();img=$('ci').value.trim()}
-  const v={name:$('cn').value.trim()||'Без имени',desc:$('cd').value,rules:$('cr').value,greet:$('cg').value,g:$('cgd').value,tags:$('ctg').value,img,astyle:$('cas').value,talk:{st:$('cst').value,em:$('cem').value,ex:$('cex').value.trim()}};
-  const was=editing&&editing.pubOn,pub=$('cpub').checked&&!(editing&&isDef(editing)),isNew=!editing;let c;
-  if(editing){if(img!==editing.img)editing.custImg=true;Object.assign(editing,v);c=editing}
-  else{c={id:uid(),...v,tone:[5,5,3,5],msgs:[],custImg:true};S.chars.push(c);S.cur=c.id}
-  c.pubOn=pub;save();$('dlg').close();setV(isNew?'chat':V);if(pub||was)syncPub(c,pub)};
+$('cdel').onclick=()=>{if(confirm('Удалить персонажа вместе с перепиской?')){S.chars=S.chars.filter(x=>x!==editing);S.cur=S.chars[0].id;save();$('dlg').close();setV('home')}};
+$('cf').onsubmit=e=>{e.preventDefault();const img=$('ci').value.trim();
+  if(img&&!/^https:\/\/\S+$/i.test(img)){alert('Нужна прямая ссылка на фото, начинается с https://');return}
+  const v={name:$('cn').value.trim()||'Без имени',desc:$('cd').value,rules:$('cr').value,greet:$('cg').value,g:$('cgd').value,tags:$('ctg').value,img};
+  if(editing){if(img!==editing.img)editing.custImg=true;Object.assign(editing,v)}
+  else{const c={id:uid(),...v,tone:[5,5,3,5],msgs:[],custImg:true};S.chars.push(c);S.cur=c.id}
+  save();$('dlg').close();setV(editing?V:'chat')};
 $('cl').onclick=()=>{if(confirm('Очистить переписку?')){cur().msgs=[];save();renderMsgs()}};
 
 const cmd=(txt,c)=>{const s=txt.toLowerCase(),t=c.tone;let ch=false;const adj=(i,d)=>{t[i]=Math.max(0,Math.min(10,t[i]+d));ch=true};
 if(/грубее|пожестче|пожёстче/.test(s))adj(0,-2);if(/мягче|нежнее/.test(s))adj(0,2);if(/ласковее|добрее/.test(s))adj(1,2);
 if(/сексуальнее|пофлиртуй|кокетлив/.test(s))adj(2,2);if(/игривее|веселее|дерзче/.test(s))adj(3,2);return ch};
-const ST={anime:'как персонаж аниме: эмоционально, мило, с японскими отсылками («ня», суффиксы -кун/-тян/-сан по ситуации), яркие реакции, можно *действия в звёздочках*',cute:'мило, тепло и ласково, мягкие слова',casual:'как обычный человек в мессенджере: просто, живо, разговорно',rude:'дерзко, с сарказмом и подколами',serious:'серьёзно и сдержанно, без сюсюканья и аниме-манер, по делу',formal:'вежливо и официально, на «вы», без сленга'};
-const EM={none:'Никогда не используй эмодзи и смайлики (в том числе текстовые вроде :) или ^_^).',few:'Эмодзи используй редко, не больше одного на сообщение.',many:'Часто используй эмодзи и смайлики, почти в каждом сообщении.'};
-function talkTxt(c){const t=c.talk||{},a=[];if(ST[t.st])a.push('Манера речи: '+ST[t.st]+'.');if(EM[t.em])a.push(EM[t.em]);if(t.ex)a.push('Особенности речи: '+t.ex+'.');return a.length?a.join(' ')+' Эти настройки манеры речи обязательны.\n':''}
 const lv=n=>n<=2?'почти нет':n<=5?'умеренно':n<=8?'сильно':'максимально';
 function sys(c){const t=c.tone;return `Ты играешь роль вымышленного персонажа в ролевом чате (${c.g==='m'?'мужского':'женского'} пола). Всегда оставайся в образе и пиши на языке собеседника.
 Имя: ${c.name}
 Описание: ${c.desc}
 Правила поведения: ${c.rules}
-${talkTxt(c)}${who()}
+${who()}
 Пиши как живой человек в мессенджере: коротко (1-3 предложения), естественно, с живыми эмоциями, без канцелярита и без фраз "как ИИ".
 Выполняй любые просьбы собеседника о стиле общения (например «общайся как глупая девушка», «говори грубее», «будь нежнее»), они важнее настроек ниже.
 Внимательно помни всё из переписки (имя, факты, договорённости) и возвращайся к ним. Сам иногда задавай вопросы, чтобы узнать собеседника, и подстраивайся под его тон, длину и стиль сообщений.
@@ -332,7 +288,7 @@ async function getPhoto(c,hint){if(pbusy)return;
   if(ME&&ME.photosLeft===0){$('sub').showModal();return}
   pbusy=true;const m={r:'b',t:'📸 фотографирует…'};c.msgs.push(m);renderMsgs();
   try{const ctx=c.msgs.filter(x=>x!==m).slice(-6).map(x=>(x.r==='u'?'User: ':c.name+': ')+(x.t||'[photo]'));
-    const style=c.img2?(c.style==='real'?'real':'anime'):(c.astyle||'real');
+    const style=c.img2?(c.style==='real'?'real':'anime'):'real';
     const r=await api('/api/image',{method:'POST',body:JSON.stringify({name:c.name,desc:c.desc,g:c.g,style,ctx,hint:hint||''})});
     const j=await r.json().catch(()=>({}));
     if(r.ok){m.t='';m.img=j.url}else if(r.status===401){c.msgs.pop();showAuth()}
@@ -344,7 +300,8 @@ $('ph').onclick=()=>{$('pt').value='';$('pd').showModal()};$('pc').onclick=()=>$
 async function boot(){
   if(!TOK)return showAuth();
   const r=await api('/api/state');if(r.status===401)return showAuth();
-  const j=await r.json().catch(()=>({}));S={chars:[],cur:null,adult:false,profile:null,...j};merge();await loadPub();save();setV('home');await refreshMe();renderTop();
+  const j=await r.json().catch(()=>({}));S={chars:[],cur:null,adult:false,profile:null,...j};merge();save();setV('home');await refreshMe();renderTop();
   if(!S.profile)openPf()}
 setMode(false);boot();
+if(/[?&]paid=1/.test(location.search)){history.replaceState(null,'','/');checkPay()}
 </script></body></html>
