@@ -1,150 +1,121 @@
 <!DOCTYPE html>
 <html lang="ru"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>BestyChat</title>
-<style>
-:root{--bg:#0e0e13;--pn:#16161d;--pn2:#1f1f2a;--bd:#2a2a37;--tx:#ececf3;--mu:#8f8fa6;--ac:#8b5cf6;--ac2:#ec4899;--grad:linear-gradient(135deg,#8b5cf6,#ec4899);color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{height:100%;margin:0}
-body{background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-#app{display:flex;height:100%}
-button{font:inherit;font-weight:600;cursor:pointer;border:0;border-radius:10px;padding:9px 14px;background:var(--grad);color:#fff;transition:transform .12s,opacity .12s}
-button:hover{opacity:.92}button:active{transform:scale(.97)}button:disabled{opacity:.5;cursor:default}
-button.g{background:transparent;color:var(--mu);border:1px solid var(--bd)}button.g:hover{color:var(--tx);border-color:var(--ac)}
-input,textarea,select{width:100%;font:inherit;color:var(--tx);background:var(--pn2);border:1px solid var(--bd);border-radius:10px;padding:10px 12px;margin:4px 0 12px;outline:0}
-input:focus,textarea:focus,select:focus{border-color:var(--ac)}label{font-size:12px;font-weight:600;color:var(--mu)}
-/* боковая панель */
-#side{width:232px;background:var(--pn);border-right:1px solid var(--bd);padding:14px 10px;display:flex;flex-direction:column;gap:4px;flex-shrink:0}
-.logo{font-size:20px;font-weight:800;padding:2px 10px 14px;display:flex;justify-content:space-between;align-items:center;background:none}
-.logo b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-.nv{display:flex;gap:12px;align-items:center;width:100%;text-align:left;padding:10px 12px;border-radius:10px;background:none;color:var(--mu)}
-.nv:hover,.nv.on{background:var(--pn2);color:var(--tx);opacity:1}
-#me{margin-top:auto;font-size:12px;color:var(--mu);padding:10px 12px;border-radius:10px;background:var(--pn2);word-break:break-word}
-/* верхняя панель и каталог */
-#wrap{flex:1;display:flex;flex-direction:column;min-width:0}
-#top{display:flex;gap:10px;align-items:center;padding:10px 18px;border-bottom:1px solid var(--bd);background:var(--pn)}
-#q{margin:0;flex:1;border-radius:999px;padding:9px 16px;max-width:520px}
-#tav{display:flex;cursor:pointer;margin-left:auto}#menu,#xs{display:none}
-#home,#chat{flex:1;min-height:0}#home{overflow:auto;padding:20px 22px}
-body[data-v=home] #chat{display:none}body[data-v=chat] #home{display:none}
-#home h2{margin:0 0 12px;font-size:20px}
-.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
-.chip{background:var(--pn2);color:var(--mu);border:1px solid var(--bd);border-radius:999px;padding:6px 14px;font-weight:500}
-.chip.on{background:var(--ac);border-color:var(--ac);color:#fff}
-#grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:16px}
-.card{background:var(--pn);border:1px solid var(--bd);border-radius:14px;overflow:hidden;cursor:pointer;transition:transform .15s,border-color .15s}
-.card:hover{transform:translateY(-3px);border-color:var(--ac)}
-.im{aspect-ratio:3/4;position:relative;background:var(--pn2)}.im img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
-.ph0{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:56px;font-weight:800;color:var(--ac);background:linear-gradient(160deg,#2a1f45,#1f1f2a)}
-.nm{position:absolute;left:0;right:0;bottom:0;padding:26px 12px 8px;font-weight:700;background:linear-gradient(transparent,rgba(0,0,0,.85))}
-.cb{padding:10px 12px}.cb p{color:var(--mu);font-size:13px;margin:0 0 8px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-.tg{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;background:var(--pn2);color:var(--mu);margin:0 4px 4px 0}.cnt{font-size:12px;color:var(--mu);margin-top:2px}
-.av{border-radius:50%;object-fit:cover;object-position:top;flex-shrink:0;background:var(--pn2);display:inline-flex;align-items:center;justify-content:center;color:var(--ac);font-weight:700;box-shadow:0 0 0 2px var(--ac)}
-/* чат */
-#chat{display:flex;flex-direction:column}
-header{padding:10px 16px;border-bottom:1px solid var(--bd);display:flex;gap:10px;align-items:center;background:var(--pn)}
-header .t{flex:1;min-width:0}header .t small{color:var(--mu);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}header button.g{padding:8px 11px}
-#hav{display:flex}
-#tune{display:none;padding:12px 16px;border-bottom:1px solid var(--bd);background:var(--pn);grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px 18px}
-#tune.open{display:grid}#tune input{padding:0;margin:6px 0 2px;accent-color:var(--ac)}#tune input[type=checkbox]{width:auto}
-#msgs{flex:1;overflow:auto;padding:18px 16px;display:flex;flex-direction:column;gap:10px}
-.m{max-width:78%;padding:10px 14px;border-radius:18px;white-space:pre-wrap;word-wrap:break-word}
-.m.u{align-self:flex-end;background:var(--grad);color:#fff;border-bottom-right-radius:5px}
-.m.b{background:var(--pn2);border:1px solid var(--bd);border-bottom-left-radius:5px}
+<title>DreamChat</title>
+<style>:root{--bg:#f6f2fc;--card:rgba(255,255,255,.78);--solid:#fff;--tx:#1d1630;--mu:#7b7394;--ac:#8b5cf6;--ac2:#ec4899;--bd:rgba(120,90,200,.16);--bot:#fff;--sh:0 10px 34px rgba(90,60,160,.14);--grad:linear-gradient(135deg,#8b5cf6,#ec4899);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e0a19;--card:rgba(30,23,50,.7);--solid:#1b1530;--tx:#f1ecfb;--mu:#9d93b8;--bd:rgba(255,255,255,.09);--bot:#271f3e;--sh:0 10px 34px rgba(0,0,0,.45)}}
+:root[data-theme="dark"]{--bg:#0e0a19;--card:rgba(30,23,50,.7);--solid:#1b1530;--tx:#f1ecfb;--mu:#9d93b8;--bd:rgba(255,255,255,.09);--bot:#271f3e;--sh:0 10px 34px rgba(0,0,0,.45)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{height:100%;margin:0}
+body{color:var(--tx);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:radial-gradient(900px 520px at 8% -10%,rgba(139,92,246,.30),transparent 60%),radial-gradient(760px 520px at 100% 110%,rgba(236,72,153,.22),transparent 60%),var(--bg);background-attachment:fixed}
+#app{display:flex;gap:14px;height:100%;max-width:1180px;margin:auto;padding:14px}
+aside,main{background:var(--card);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid var(--bd);border-radius:22px;box-shadow:var(--sh)}
+aside{width:290px;padding:16px;overflow:auto;flex-shrink:0;display:flex;flex-direction:column}
+main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+h1{font-size:20px;margin:0;font-weight:800;letter-spacing:.2px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+button{font:inherit;font-weight:600;cursor:pointer;border:0;border-radius:12px;padding:9px 14px;background:var(--grad);color:#fff;transition:transform .15s,box-shadow .15s,opacity .15s;box-shadow:0 4px 14px rgba(139,92,246,.35)}
+button:hover{transform:translateY(-1px)}button:active{transform:scale(.97)}button:disabled{opacity:.5;cursor:default;transform:none}
+button.g{background:transparent;color:var(--mu);border:1px solid var(--bd);box-shadow:none}button.g:hover{color:var(--tx);border-color:var(--ac)}
+#list{flex:1;margin-top:12px}
+.ch{display:flex;gap:12px;align-items:center;padding:10px;border:1px solid transparent;border-radius:16px;margin-bottom:6px;cursor:pointer;transition:background .15s,border-color .15s}
+.ch:hover{background:rgba(139,92,246,.08)}.ch.on{background:rgba(139,92,246,.14);border-color:rgba(139,92,246,.45)}
+.ch>div{min-width:0}.ch b{display:block}.ch small{color:var(--mu);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.av{border-radius:50%;object-fit:cover;object-position:top;flex-shrink:0;background:var(--bot);display:inline-flex;align-items:center;justify-content:center;color:var(--ac);font-weight:700;box-shadow:0 0 0 2px var(--solid),0 0 0 4px rgba(139,92,246,.55)}
+#me{font-size:12px;color:var(--mu);margin:14px 0 8px;word-break:break-all;padding:10px 12px;border-radius:12px;background:rgba(139,92,246,.08)}
+input,textarea,select{width:100%;font:inherit;color:var(--tx);background:var(--solid);border:1px solid var(--bd);border-radius:12px;padding:10px 12px;margin:4px 0 12px;outline:0;transition:border-color .15s,box-shadow .15s}
+input:focus,textarea:focus,select:focus{border-color:var(--ac);box-shadow:0 0 0 3px rgba(139,92,246,.2)}
+label{font-size:12px;font-weight:600;color:var(--mu)}
+header{padding:12px 16px;border-bottom:1px solid var(--bd);display:flex;gap:10px;align-items:center}
+#hav{display:flex}header .t{flex:1;min-width:0;margin-left:4px}header .t b{font-size:16px}header .t small{color:var(--mu);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header button.g{padding:8px 11px}
+#tune{display:none;padding:12px 16px;border-bottom:1px solid var(--bd);grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px 18px;animation:dn .2s}
+#tune.open{display:grid}#tune input{padding:0;margin:6px 0 2px;accent-color:var(--ac);box-shadow:none}
+#tune input[type=checkbox]{width:auto}
+@keyframes dn{from{opacity:0;transform:translateY(-6px)}}
+#msgs{flex:1;overflow:auto;padding:18px 16px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
+.m{max-width:78%;padding:10px 14px;border-radius:20px;white-space:pre-wrap;word-wrap:break-word;animation:pop .22s ease-out}
+@keyframes pop{from{opacity:0;transform:translateY(6px) scale(.98)}}
+.m.u{align-self:flex-end;background:var(--grad);color:#fff;border-bottom-right-radius:6px;box-shadow:0 4px 14px rgba(139,92,246,.3)}
+.m.b{background:var(--bot);border:1px solid var(--bd);border-bottom-left-radius:6px}
 .br{display:flex;gap:8px;align-self:flex-start;align-items:flex-end;max-width:92%}.br .m{max-width:none}
 .typing{display:flex;gap:5px;padding:14px 16px}.typing i{width:7px;height:7px;border-radius:50%;background:var(--mu);animation:bl 1.2s infinite}
-.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}@keyframes bl{0%,60%,100%{opacity:.3}30%{opacity:1;transform:translateY(-4px)}}
-.ph{display:block;width:min(260px,100%);border-radius:12px;cursor:zoom-in}.m.pic{padding:6px}
-#f{display:flex;gap:10px;padding:12px 14px;border-top:1px solid var(--bd);background:var(--pn)}
-#f input{margin:0;flex:1;border-radius:999px;padding:12px 18px}#send,#ph{border-radius:50%;width:46px;height:46px;padding:0;font-size:17px}
+.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+@keyframes bl{0%,60%,100%{opacity:.3;transform:none}30%{opacity:1;transform:translateY(-4px)}}
+#f{display:flex;gap:10px;padding:12px 14px;border-top:1px solid var(--bd)}
+#f input{margin:0;flex:1;border-radius:999px;padding:12px 18px}
+#send{border-radius:50%;width:46px;height:46px;padding:0;font-size:17px}
 .empty{margin:auto;text-align:center;color:var(--mu);padding:20px}
-/* окна */
-dialog{border:1px solid var(--bd);border-radius:18px;background:var(--pn);color:var(--tx);max-width:460px;width:92%;padding:22px}
-dialog::backdrop{background:rgba(0,0,0,.7)}dialog h3{margin-top:0}
-.brand{font-size:26px;font-weight:800;text-align:center;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-.tag{text-align:center;color:var(--mu);margin:2px 0 14px}.row{display:flex;gap:8px;justify-content:flex-end}
-.err{color:#fb7185;font-size:13px;min-height:18px}.lnk{background:none;color:var(--ac);padding:8px 0 0;font-size:13px;width:100%}
-.pl{border:1px solid var(--bd);border-radius:14px;padding:12px;margin-bottom:10px;display:flex;flex-direction:column;gap:6px}.pl span{color:var(--mu);font-size:13px}
-.hint{display:block;color:var(--mu);margin:-6px 0 10px;font-size:12px}
-::-webkit-scrollbar{width:8px}::-webkit-scrollbar-thumb{background:#2f2f3e;border-radius:8px}
-@media(max-width:760px){#side{position:fixed;inset:0 25% 0 0;z-index:5;transform:translateX(-100%);transition:transform .2s;width:auto}#side.open{transform:none}
-#menu,#xs{display:inline-block}#top{padding:10px}#home{padding:14px}#grid{grid-template-columns:repeat(2,1fr);gap:10px}.m{max-width:88%}header{padding:8px 10px}}
-</style></head><body data-v="home">
+dialog{border:1px solid var(--bd);border-radius:22px;background:var(--solid);color:var(--tx);max-width:440px;width:92%;padding:24px;box-shadow:0 24px 70px rgba(0,0,0,.4);animation:pop .2s}
+dialog::backdrop{background:rgba(10,6,20,.6);backdrop-filter:blur(6px)}
+dialog h3{font-size:19px}.brand{font-size:26px;font-weight:800;text-align:center;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.tag{text-align:center;color:var(--mu);margin:2px 0 14px}
+.row{display:flex;gap:8px;justify-content:flex-end}
+.err{color:#e11d48;font-size:13px;min-height:18px}.lnk{background:none;color:var(--ac);padding:8px 0 0;font-size:13px;box-shadow:none;width:100%}
+#ph{border-radius:50%;width:46px;height:46px;padding:0;font-size:18px}.ph{display:block;width:min(260px,100%);border-radius:14px;cursor:zoom-in}.m.pic{padding:6px}
+.pl{border:1px solid var(--bd);border-radius:16px;padding:12px;margin-bottom:10px;display:flex;flex-direction:column;gap:6px}.pl span{color:var(--mu);font-size:13px}
+#menu,#xs{display:none}
+::-webkit-scrollbar{width:8px}::-webkit-scrollbar-thumb{background:rgba(139,92,246,.3);border-radius:8px}
+@media(max-width:720px){#app{padding:0;gap:0}aside,main{border-radius:0;border:0}aside{position:fixed;inset:0;z-index:5;width:100%;display:none}aside.open{display:flex}#menu,#xs{display:inline-block}.m{max-width:88%}body{background-attachment:scroll}}
+</style></head><body>
 <div id="app">
-<nav id="side"><div class="logo"><b>✦ BestyChat</b><button class="g" id="xs">✕</button></div>
-<button class="nv on" id="nh">🏠 Главная</button><button class="nv" id="nc">💬 Мои чаты</button><button class="nv" id="nn">➕ Создать персонажа</button><button class="nv" id="np">👤 Мой профиль</button><button class="nv" id="nsub">⭐ Тарифы</button>
-<div id="me"></div><button class="g" id="out">Выйти</button></nav>
-<div id="wrap">
-<div id="top"><button class="g" id="menu">☰</button><input id="q" placeholder="Поиск персонажей…" autocomplete="off"><span id="tav" title="Мой профиль"></span></div>
-<section id="home"><h2 id="ht">Персонажи</h2><div class="chips" id="chips"></div><div id="grid"></div></section>
-<section id="chat">
-<header><button class="g" id="bk">←</button><span id="hav"></span><div class="t"><b id="hn">—</b><small id="hd"></small></div>
+<aside id="side"><div class="top"><h1>✦ DreamChat</h1><button class="g" id="xs">✕</button></div>
+<button style="width:100%" id="new">+ Новый персонаж</button>
+<div id="list"></div>
+<div id="me"></div><button id="subb" style="width:100%;margin-bottom:8px;display:none">⭐ Подписка</button><button class="g" style="width:100%" id="out">Выйти</button></aside>
+<main>
+<header><button class="g" id="menu">☰</button><span id="hav"></span><div class="t"><b id="hn">—</b><small id="hd"></small></div>
 <button class="g" id="st"></button><button class="g" id="tg">🎚 Тон</button><button class="g" id="ed">✎</button><button class="g" id="cl">🗑</button></header>
 <div id="tune">
 <div><label>Грубость ↔ Мягкость: <span id="v1"></span></label><input type="range" id="t1" min="0" max="10"></div>
 <div><label>Ласковость: <span id="v2"></span></label><input type="range" id="t2" min="0" max="10"></div>
 <div><label>Флирт / романтика: <span id="v3"></span></label><input type="range" id="t3" min="0" max="10"></div>
 <div><label>Дерзость / юмор: <span id="v4"></span></label><input type="range" id="t4" min="0" max="10"></div>
-<div style="grid-column:1/-1"><label><input type="checkbox" id="adult" style="width:auto;margin:0 6px 0 0">Режим 18+ (нужен возраст 18+ в профиле)</label></div>
+<div style="grid-column:1/-1"><label><input type="checkbox" id="adult" style="width:auto;margin:0 6px 0 0">Режим 18+ (только для совершеннолетних)</label></div>
 </div>
 <div id="msgs"></div>
 <form id="f"><input id="in" placeholder="Напиши сообщение…" autocomplete="off"><button type="button" class="g" id="ph" title="Попросить фото">🖼</button><button id="send">➤</button></form>
-</section></div></div>
-
-<dialog id="pf"><h3>👤 Мой профиль</h3>
-<p class="tag" style="text-align:left;margin-top:-6px">Персонажи увидят это и будут общаться с тобой, зная, кто ты.</p>
-<label>Имя (как к тебе обращаться)</label><input id="pfn" maxlength="40">
-<label>Возраст</label><input id="pfa" type="number" min="10" max="99" placeholder="Нужно 18+ для режима 18+">
-<label>Пол</label><select id="pfg"><option value="">Не указывать</option><option value="m">Парень</option><option value="f">Девушка</option><option value="o">Другое</option></select>
-<label>О себе (внешность, характер, роль)</label><textarea id="pfb" rows="4" maxlength="600" placeholder="Например: фембой, милый и застенчивый / качок, высокий, уверенный / секси, люблю флирт…"></textarea>
-<label>Фото профиля — прямая ссылка (необязательно)</label><input id="pfi" placeholder="https://i.postimg.cc/.../photo.png">
-<small class="hint">Загрузи фото на postimg.cc, скопируй «Прямая ссылка» (Direct link) и вставь сюда.</small>
-<div class="row"><button type="button" class="g" id="pfc">Позже</button><button type="button" id="pfs">Сохранить</button></div></dialog>
+</main></div>
 
 <dialog id="dlg"><form method="dialog" id="cf" style="display:block;border:0;padding:0">
-<h3>Персонаж</h3>
+<h3 style="margin-top:0">Персонаж</h3>
 <label>Имя</label><input id="cn" required>
 <label>Кто это (внешность, возраст 18+, характер, история)</label><textarea id="cd" rows="3"></textarea>
-<label>Что может делать и как должен отвечать</label><textarea id="cr" rows="3" placeholder="Например: отвечает кратко, дразнит, использует эмодзи…"></textarea>
-<label>Теги через запятую</label><input id="ctg" placeholder="подруга, дерзкая, аниме">
-<label>Пол персонажа</label><select id="cgd"><option value="f">Женский</option><option value="m">Мужской</option></select>
-<label>Фото персонажа — прямая ссылка (необязательно)</label><input id="ci" placeholder="https://i.postimg.cc/.../photo.png">
-<small class="hint">Как получить: 1) открой postimg.cc и загрузи фото; 2) скопируй «Прямая ссылка» (Direct link, оканчивается на .png/.jpg); 3) вставь сюда.</small>
-<label>Приветствие (необязательно)</label><input id="cg">
-<div class="row"><button type="button" class="g" id="cdel" style="display:none;margin-right:auto">Удалить</button><button type="button" class="g" id="cc">Отмена</button><button type="submit">Сохранить</button></div></form></dialog>
+<label>Что может делать и как должен отвечать</label><textarea id="cr" rows="3" placeholder="Например: отвечает кратко, дразнит, использует эмодзи, ведёт себя как застенчивый фембой…"></textarea>
+<label>Пол персонажа</label><select id="cgd" style="width:100%;margin:4px 0 10px;padding:8px;border-radius:10px;background:var(--bg);color:var(--tx);border:1px solid var(--bd)"><option value="f">Женский</option><option value="m">Мужской</option></select><label>Фото персонажа — прямая ссылка (необязательно)</label><input id="ci" placeholder="https://i.postimg.cc/.../photo.png"><small style="display:block;color:var(--mu);margin:-6px 0 10px">Как получить: 1) открой postimg.cc и загрузи фото; 2) после загрузки скопируй поле «Прямая ссылка» (Direct link, оканчивается на .png/.jpg); 3) вставь сюда.</small><label>Приветствие (необязательно)</label><input id="cg">
+<div class="row"><button type="button" class="g" id="cc">Отмена</button><button type="submit" id="cs">Сохранить</button></div></form></dialog>
 
-<dialog id="age"><h3>Режим 18+</h3>
+<dialog id="age"><h3 style="margin-top:0">Режим 18+</h3>
 <p>Включая его, ты подтверждаешь, что тебе исполнилось 18 лет. Все персонажи — только взрослые. Допускается откровенный флирт и романтика без графических сексуальных описаний.</p>
 <div class="row"><button class="g" id="an">Отмена</button><button id="ay">Мне 18+</button></div></dialog>
-<dialog id="auth"><div class="brand">✦ BestyChat</div><div class="tag">Живые персонажи, которые тебя помнят</div><h3 id="at" style="margin:0 0 8px">Вход</h3>
+
+<dialog id="auth"><div class="brand">✦ DreamChat</div><div class="tag">Живые персонажи, которые тебя помнят</div><h3 id="at" style="margin:0 0 8px">Вход</h3>
 <label>Логин</label><input id="al" autocomplete="username"><label>Пароль (от 6 символов)</label><input id="ap" type="password" autocomplete="current-password">
 <div class="err" id="aerr"></div><button id="ago" style="width:100%">Войти</button><button class="lnk" id="asw"></button></dialog>
-<dialog id="sub"><h3>⭐ Тарифы</h3>
+<dialog id="sub"><h3 style="margin-top:0">⭐ Тарифы</h3>
 <div class="pl"><b>Plus · 499 ₽/мес</b><span>Полный доступ, без лимита сообщений. До 30 фото в месяц.</span><button data-plan="plus">Выбрать Plus</button></div>
 <div class="pl"><b>VIP · 990 ₽/мес</b><span>Развёрнутые ответы персонажей. До 200 фото в месяц.</span><button data-plan="vip">Выбрать VIP</button></div>
 <div class="pl"><b>SUPER · 2990 ₽/мес</b><span>Никаких ограничений.</span><button data-plan="super">Выбрать SUPER</button></div>
-<p class="tag" style="margin:10px 0">Оплата через ЮKassa: банковские карты, СБП и другие способы. Тариф действует 30 дней. Бесплатно: 25 сообщений и 3 фото в день.</p>
+<p class="tag" style="margin:10px 0">Сейчас тарифы включаются бесплатно, оплату (ЮMoney) подключим позже. Бесплатно: 25 сообщений и 3 фото в день.</p>
 <div class="row"><button class="g" id="sn">Закрыть</button></div></dialog>
-<dialog id="pd"><h3>🖼 Какое фото?</h3>
+<dialog id="pd"><h3 style="margin-top:0">🖼 Какое фото?</h3>
 <label>Опиши, что хочешь: одежда, поза, место. Можно оставить пустым, тогда персонаж выберет сам.</label>
 <textarea id="pt" rows="3" placeholder="Например: селфи в кафе, в красной куртке, улыбается"></textarea>
 <div class="row"><button class="g" id="pc">Отмена</button><button id="pg">Сделать фото</button></div></dialog>
-
 <script>
 const $=id=>document.getElementById(id);
 const DEF=[
-{id:'mia',name:'Мия',g:'f',desc:'Взрослая (22) дерзкая подруга с тёплым сердцем.',rules:'Отвечает живо и коротко, шутит, иногда дразнит.',greet:'Привет! Ну что, рассказывай, как день? 😏',tone:[5,5,3,6],style:'anime',tags:'подруга, дерзкая, юмор',
+{id:'mia',name:'Мия',g:'f',desc:'Взрослая (22) дерзкая подруга с тёплым сердцем.',rules:'Отвечает живо и коротко, шутит, иногда дразнит.',greet:'Привет! Ну что, рассказывай, как день? 😏',tone:[5,5,3,6],style:'anime',
  img:'https://i.postimg.cc/FKScBkhy/Chat-GPT-Image-1-okt-2026-g-00-03-43.png',img2:'https://i.postimg.cc/KYbvm1nQ/Chat-GPT-Image-1-okt-2026-g-00-07-15.png'},
-{id:'kai',name:'Кай',g:'m',desc:'Взрослый (21) застенчивый фембой в гольфах, любит аниме.',rules:'Смущается, говорит мягко, добавляет эмодзи, постепенно раскрепощается.',greet:'А-а, привет… я тут немного волнуюсь 🥺',tone:[8,8,4,3],style:'anime',tags:'фембой, застенчивый, аниме',
+{id:'kai',name:'Кай',g:'m',desc:'Взрослый (21) застенчивый фембой в гольфах, любит аниме.',rules:'Смущается, говорит мягко, добавляет эмодзи, постепенно раскрепощается.',greet:'А-а, привет… я тут немного волнуюсь 🥺',tone:[8,8,4,3],style:'anime',
  img:'https://i.postimg.cc/6Q6qd7y2/Chat-GPT-Image-1-okt-2026-g-00-09-11.png',img2:'https://i.postimg.cc/wxNqR50F/Chat-GPT-Image-1-okt-2026-g-00-10-50.png'}];
-let S={chars:[],cur:null,adult:false,profile:null},TOK=localStorage.getItem('dct')||'',ME=null,tmr,regMode=false,V='home',FILT='all',Q='';
+let S={chars:[],cur:null,adult:false},TOK=localStorage.getItem('dct')||'',ME=null,tmr,regMode=false;
 const uid=()=>Math.random().toString(36).slice(2,9);
 const cur=()=>S.chars.find(c=>c.id===S.cur);
-const isDef=c=>DEF.some(d=>d.id===c.id);
 const api=(p,o={})=>fetch(p,{...o,headers:{'Content-Type':'application/json',...(TOK&&{Authorization:'Bearer '+TOK})}});
 function save(){clearTimeout(tmr);tmr=setTimeout(()=>api('/api/state',{method:'PUT',body:JSON.stringify(S)}).catch(()=>{}),500)}
-const age=()=>+((S.profile||{}).age)||0, adultOn=()=>S.adult&&age()>=18;
 
-/* ---------- вход ---------- */
+/* ---------- вход / регистрация ---------- */
 function showAuth(){$('age').close();$('auth').showModal()}
 $('auth').addEventListener('cancel',e=>e.preventDefault());
 function setMode(r){regMode=r;$('at').textContent=r?'Регистрация':'Вход';$('ago').textContent=r?'Создать аккаунт':'Войти';$('asw').textContent=r?'Уже есть аккаунт? Войти':'Нет аккаунта? Зарегистрироваться';$('aerr').textContent=''}
@@ -154,97 +125,52 @@ async function doAuth(){
   const j=await r.json().catch(()=>({}));if(!r.ok){$('aerr').textContent=j.error||'Ошибка '+r.status;return}
   TOK=j.token;localStorage.setItem('dct',TOK);$('ap').value='';$('auth').close();boot()}
 $('ago').onclick=doAuth;$('ap').onkeydown=e=>{if(e.key==='Enter')doAuth()};
-$('out').onclick=async()=>{try{await api('/api/logout',{method:'POST'})}catch(e){}TOK='';localStorage.removeItem('dct');S={chars:[],cur:null,adult:false,profile:null};ME=null;showAuth()};
+$('out').onclick=async()=>{try{await api('/api/logout',{method:'POST'})}catch(e){}TOK='';localStorage.removeItem('dct');S={chars:[],cur:null,adult:false};ME=null;showAuth()};
 
-/* ---------- профиль-тариф ---------- */
+/* ---------- профиль и лимит ---------- */
 async function refreshMe(){try{const r=await api('/api/me');if(r.status===401)return showAuth();ME=await r.json();
   $('me').textContent='👤 '+ME.login+' · '+ME.planName+' · '+(ME.left<0?'сообщения ∞':'сообщений '+ME.left+'/'+ME.limit)+' · '+(ME.photosLeft<0?'фото ∞':'фото '+ME.photosLeft+'/'+ME.photoLimit+(ME.photoPer==='month'?' в мес.':' в день'));
-  $('nsub').textContent=ME.sub?'⭐ Сменить тариф':'⭐ Тарифы'}catch(e){}}
-$('nsub').onclick=()=>{$('side').classList.remove('open');$('sub').showModal()};$('sn').onclick=()=>$('sub').close();
-document.querySelectorAll('[data-plan]').forEach(b=>b.onclick=async()=>{const r=await api('/api/subscribe',{method:'POST',body:JSON.stringify({plan:b.dataset.plan})});const j=await r.json().catch(()=>({}));if(!r.ok)return alert(j.error||'Ошибка '+r.status);if(j.confirmation_url){location.href=j.confirmation_url;return}$('sub').close();refreshMe()});
-async function checkPay(){if(!TOK)return;for(let i=0;i<6;i++){const r=await api('/api/pay/check',{method:'POST'}),j=await r.json().catch(()=>({}));
-  if(j.status==='succeeded'){await refreshMe();return alert('Оплата прошла! Тариф '+j.planName+' активен 🎉')}
-  if(j.status==='canceled')return alert('Платёж отменён');if(j.status==='none')return;await new Promise(r=>setTimeout(r,2500))}
-  alert('Платёж ещё обрабатывается. Тариф включится автоматически, обнови страницу через минуту.')}
+  $('subb').style.display='block';$('subb').textContent=ME.sub?'⭐ Сменить тариф':'⭐ Тарифы'}catch(e){}}
+$('subb').onclick=()=>$('sub').showModal();$('sn').onclick=()=>$('sub').close();
+document.querySelectorAll('[data-plan]').forEach(b=>b.onclick=async()=>{const r=await api('/api/subscribe',{method:'POST',body:JSON.stringify({plan:b.dataset.plan})});const j=await r.json().catch(()=>({}));if(!r.ok)return alert(j.error||'Ошибка '+r.status);$('sub').close();refreshMe()});
 
-/* ---------- мой профиль (персона) ---------- */
-function openPf(){const p=S.profile||{};$('pfn').value=p.name||'';$('pfa').value=p.age||'';$('pfg').value=p.g||'';$('pfb').value=p.about||'';$('pfi').value=p.img||'';$('side').classList.remove('open');$('pf').showModal()}
-$('pfs').onclick=()=>{const a=parseInt($('pfa').value)||0,img=$('pfi').value.trim();
-  if(a&&(a<10||a>99))return alert('Проверь возраст');
-  if(img&&!/^https:\/\/\S+$/i.test(img))return alert('Нужна прямая ссылка на фото, начинается с https://');
-  S.profile={name:$('pfn').value.trim(),age:a,g:$('pfg').value,about:$('pfb').value.trim(),img};
-  if(a&&a<18)S.adult=false;save();$('pf').close();renderTop();V==='chat'?render():renderHome()};
-$('pfc').onclick=()=>{if(!S.profile)S.profile={};save();$('pf').close()};
-$('np').onclick=openPf;$('tav').onclick=openPf;
-function who(){const p=S.profile||{},g={m:'парень',f:'девушка',o:'другое'}[p.g]||'не указан';
-  let t=`О собеседнике (это пользователь, с которым ты общаешься): имя — ${p.name||'не указано'}; возраст — ${p.age||'не указан'}; пол — ${g}; о себе: ${p.about||'не указано'}.\nОбращайся к нему по имени, учитывай его внешность, характер и пожелания из описания, помни, кто он.`;
-  if(p.age&&p.age<18)t+='\nСобеседник несовершеннолетний: никакого флирта, романтики и сексуальных тем, общайся дружелюбно и безопасно.';return t}
-
-/* ---------- картинки ---------- */
+/* ---------- аватары ---------- */
 const av=c=>c.style==='real'&&c.img?c.img:(c.img2||c.img||'');
-function pic(u,name,s){const L=()=>{const e=document.createElement('span');e.className='av';e.style.width=e.style.height=s+'px';e.style.fontSize=s/2+'px';e.textContent=(name||'?')[0].toUpperCase();return e};
-  if(!u)return L();const i=document.createElement('img');i.className='av';i.src=u;i.referrerPolicy='no-referrer';i.style.width=i.style.height=s+'px';i.onerror=()=>i.replaceWith(L());return i}
-const ava=(c,s)=>pic(av(c),c.name,s);
-function renderTop(){const p=S.profile||{};$('tav').replaceChildren(pic(p.img,p.name||(ME&&ME.login),38))}
+function ava(c,s){const L=()=>{const e=document.createElement('span');e.className='av';e.style.width=e.style.height=s+'px';e.style.fontSize=s/2+'px';e.textContent=(c.name||'?')[0];return e};
+  const u=av(c);if(!u)return L();const i=document.createElement('img');i.className='av';i.src=u;i.referrerPolicy='no-referrer';i.style.width=i.style.height=s+'px';i.onerror=()=>i.replaceWith(L());return i}
 
 function merge(){DEF.forEach(d=>{const c=S.chars.find(x=>x.id===d.id);
-  if(!c)S.chars.push({...JSON.parse(JSON.stringify(d)),msgs:[]});else{if(!c.custImg){c.img=d.img;c.img2=d.img2}c.style=c.style||'anime';if(c.tags==null)c.tags=d.tags}});
+  if(!c)S.chars.push({...JSON.parse(JSON.stringify(d)),msgs:[]});else{if(!c.custImg){c.img=d.img;c.img2=d.img2}c.style=c.style||'anime'}});
   if(!S.chars.find(c=>c.id===S.cur))S.cur=S.chars[0].id}
 
-/* ---------- каталог ---------- */
-function setV(v){V=v;document.body.dataset.v=v;$('side').classList.remove('open');
-  ['nh','nc'].forEach(i=>$(i).classList.toggle('on',v==='home'&&(i==='nc')===(FILT==='chats')));v==='home'?renderHome():render()}
-function cover(c){const w=document.createElement('div'),u=av(c);w.className='im';
-  const L=()=>{const e=document.createElement('div');e.className='ph0';e.textContent=(c.name||'?')[0];return e};
-  if(u){const i=document.createElement('img');i.src=u;i.loading='lazy';i.referrerPolicy='no-referrer';i.onerror=()=>i.replaceWith(L());w.append(i)}else w.append(L());
-  const n=document.createElement('div');n.className='nm';n.textContent=c.name;w.append(n);return w}
-function renderHome(){renderTop();
-  const F=[['all','Все'],['chats','Мои чаты'],['f','Девушки'],['m','Парни'],['mine','Созданные мной']];
-  $('chips').replaceChildren(...F.map(([k,t])=>{const b=document.createElement('button');b.className='chip'+(FILT===k?' on':'');b.textContent=t;b.onclick=()=>{FILT=k;setV('home')};return b}));
-  $('ht').textContent=FILT==='chats'?'Мои чаты':'Персонажи';
-  const q=Q.toLowerCase(),list=S.chars.filter(c=>{if(q&&!(c.name+' '+(c.desc||'')+' '+(c.tags||'')).toLowerCase().includes(q))return false;
-    return FILT==='chats'?c.msgs.length>0:FILT==='f'?c.g==='f':FILT==='m'?c.g==='m':FILT==='mine'?!isDef(c):true});
-  const g=$('grid');g.replaceChildren();
-  if(!list.length){const e=document.createElement('div');e.className='empty';e.textContent=FILT==='chats'?'Пока нет чатов — выбери персонажа и напиши ему':'Ничего не найдено';g.append(e)}
-  list.forEach(c=>{const d=document.createElement('div');d.className='card';d.append(cover(c));
-    const b=document.createElement('div'),p=document.createElement('p'),n=document.createElement('div');b.className='cb';p.textContent=c.desc||'';
-    (c.tags||'').split(',').map(x=>x.trim()).filter(Boolean).slice(0,3).forEach(t=>{const s=document.createElement('span');s.className='tg';s.textContent=t;b.append(s)});
-    n.className='cnt';n.textContent='💬 '+c.msgs.length;b.prepend(p);b.append(n);d.append(b);
-    d.onclick=()=>{S.cur=c.id;save();setV('chat')};g.append(d)})}
-$('q').oninput=e=>{Q=e.target.value;if(V!=='home')setV('home');else renderHome()};
-$('nh').onclick=()=>{FILT='all';Q='';$('q').value='';setV('home')};$('nc').onclick=()=>{FILT='chats';setV('home')};
-$('bk').onclick=()=>setV('home');
-$('menu').onclick=()=>$('side').classList.add('open');$('xs').onclick=()=>$('side').classList.remove('open');
-
-/* ---------- чат ---------- */
+function renderList(){$('list').innerHTML='';S.chars.forEach(c=>{const d=document.createElement('div');d.className='ch'+(c.id===S.cur?' on':'');
+  const t=document.createElement('div'),b=document.createElement('b'),s=document.createElement('small');b.textContent=c.name;s.textContent=(c.desc||'').slice(0,60);t.append(b,s);d.append(ava(c,44),t);
+  d.onclick=()=>{S.cur=c.id;save();$('side').classList.remove('open');render()};$('list').append(d)})}
 function renderMsgs(){const c=cur(),box=$('msgs');box.innerHTML='';
   if(!c.msgs.length&&!c.greet){const e=document.createElement('div');e.className='empty';e.textContent='Напиши первое сообщение';box.append(e)}
   const all=(c.greet?[{r:'b',t:c.greet}]:[]).concat(c.msgs);
-  all.forEach(m=>{const d=document.createElement('div');d.className='m '+m.r;
-    if(m.t==='…'){d.classList.add('typing');d.innerHTML='<i></i><i></i><i></i>'}else d.textContent=m.t;
+  all.forEach(m=>{const d=document.createElement('div');d.className='m '+m.r;if(m.t==='…'){d.classList.add('typing');d.innerHTML='<i></i><i></i><i></i>'}else d.textContent=m.t;
     if(m.img){const im=document.createElement('img');im.className='ph';im.src=m.img;im.onclick=()=>window.open(m.img);d.append(im);d.classList.add('pic')}
     if(m.r==='b'){const w=document.createElement('div');w.className='br';w.append(ava(c,34),d);box.append(w)}else box.append(d)});box.scrollTop=box.scrollHeight}
-function render(){const c=cur();$('hn').textContent=c.name;$('hd').textContent=c.desc||'';$('hav').replaceChildren(ava(c,40));renderTop();
+function render(){const c=cur();renderList();$('hn').textContent=c.name;$('hd').textContent=c.desc||'';$('hav').replaceChildren(ava(c,40));
   $('st').style.display=c.img&&c.img2?'':'none';$('st').textContent=c.style==='real'?'🎨 Аниме':'🧑 Реал';
-  c.tone=c.tone||[5,5,3,5];[1,2,3,4].forEach(i=>{$('t'+i).value=c.tone[i-1];$('v'+i).textContent=c.tone[i-1]});$('adult').checked=adultOn();renderMsgs()}
+  c.tone=c.tone||[5,5,3,5];[1,2,3,4].forEach(i=>{$('t'+i).value=c.tone[i-1];$('v'+i).textContent=c.tone[i-1]});$('adult').checked=!!S.adult;renderMsgs()}
 $('st').onclick=()=>{const c=cur();c.style=c.style==='real'?'anime':'real';save();render()};
+
 [1,2,3,4].forEach(i=>$('t'+i).oninput=e=>{cur().tone[i-1]=+e.target.value;$('v'+i).textContent=e.target.value;save()});
 $('tg').onclick=()=>$('tune').classList.toggle('open');
-$('adult').onchange=e=>{if(e.target.checked){e.target.checked=false;if(age()<18){alert('Чтобы включить 18+, укажи в профиле возраст от 18 лет.');openPf();return}$('age').showModal()}else{S.adult=false;save()}};
+$('adult').onchange=e=>{if(e.target.checked){e.target.checked=false;$('age').showModal()}else{S.adult=false;save()}};
 $('ay').onclick=()=>{S.adult=true;$('adult').checked=true;save();$('age').close()};$('an').onclick=()=>$('age').close();
-
-/* ---------- создание / правка персонажа ---------- */
+$('xs').onclick=()=>$('side').classList.remove('open');$('menu').onclick=()=>$('side').classList.add('open');
 let editing=null;
-function openEd(c){editing=c;$('cn').value=c?c.name:'';$('cd').value=c?c.desc:'';$('cr').value=c?c.rules:'';$('cg').value=c?c.greet:'';$('ctg').value=c&&c.tags?c.tags:'';$('cgd').value=c&&c.g?c.g:'f';$('ci').value=c&&c.img?c.img:'';
-  $('cdel').style.display=c&&!isDef(c)?'':'none';$('side').classList.remove('open');$('dlg').showModal()}
-$('nn').onclick=()=>openEd(null);$('ed').onclick=()=>openEd(cur());$('cc').onclick=()=>$('dlg').close();
-$('cdel').onclick=()=>{if(confirm('Удалить персонажа вместе с перепиской?')){S.chars=S.chars.filter(x=>x!==editing);S.cur=S.chars[0].id;save();$('dlg').close();setV('home')}};
+function openEd(c){editing=c;$('cn').value=c?c.name:'';$('cd').value=c?c.desc:'';$('cr').value=c?c.rules:'';$('cg').value=c?c.greet:'';$('cgd').value=c&&c.g?c.g:'f';$('ci').value=c&&c.img?c.img:'';$('dlg').showModal()}
+$('new').onclick=()=>openEd(null);$('ed').onclick=()=>openEd(cur());$('cc').onclick=()=>$('dlg').close();
 $('cf').onsubmit=e=>{e.preventDefault();const img=$('ci').value.trim();
   if(img&&!/^https:\/\/\S+$/i.test(img)){alert('Нужна прямая ссылка на фото, начинается с https://');return}
-  const v={name:$('cn').value.trim()||'Без имени',desc:$('cd').value,rules:$('cr').value,greet:$('cg').value,g:$('cgd').value,tags:$('ctg').value,img};
+  const v={name:$('cn').value.trim()||'Без имени',desc:$('cd').value,rules:$('cr').value,greet:$('cg').value,g:$('cgd').value,img};
   if(editing){if(img!==editing.img)editing.custImg=true;Object.assign(editing,v)}
   else{const c={id:uid(),...v,tone:[5,5,3,5],msgs:[],custImg:true};S.chars.push(c);S.cur=c.id}
-  save();$('dlg').close();setV(editing?V:'chat')};
+  save();$('dlg').close();$('side').classList.remove('open');render()};
 $('cl').onclick=()=>{if(confirm('Очистить переписку?')){cur().msgs=[];save();renderMsgs()}};
 
 const cmd=(txt,c)=>{const s=txt.toLowerCase(),t=c.tone;let ch=false;const adj=(i,d)=>{t[i]=Math.max(0,Math.min(10,t[i]+d));ch=true};
@@ -255,12 +181,11 @@ function sys(c){const t=c.tone;return `Ты играешь роль вымышл
 Имя: ${c.name}
 Описание: ${c.desc}
 Правила поведения: ${c.rules}
-${who()}
 Пиши как живой человек в мессенджере: коротко (1-3 предложения), естественно, с живыми эмоциями, без канцелярита и без фраз "как ИИ".
 Выполняй любые просьбы собеседника о стиле общения (например «общайся как глупая девушка», «говори грубее», «будь нежнее»), они важнее настроек ниже.
 Внимательно помни всё из переписки (имя, факты, договорённости) и возвращайся к ним. Сам иногда задавай вопросы, чтобы узнать собеседника, и подстраивайся под его тон, длину и стиль сообщений.
 Тон (0-10): мягкость ${t[0]} (чем ниже, тем грубее и резче), ласковость ${t[1]} (${lv(t[1])}), флирт ${t[2]} (${lv(t[2])}), дерзость и юмор ${t[3]} (${lv(t[3])}).
-Режим 18+: ${adultOn()?'включён, допустим взрослый флирт, романтика и чувственная атмосфера':'выключен, только лёгкий флирт'}.
+Режим 18+: ${S.adult?'включён, допустим взрослый флирт, романтика и чувственная атмосфера':'выключен, только лёгкий флирт'}.
 Персонаж всегда взрослый; никаких сексуальных тем с несовершеннолетними.`}
 
 let busy=false;
@@ -281,7 +206,6 @@ $('f').onsubmit=async e=>{e.preventDefault();if(busy)return;const txt=$('in').va
   busy=false;$('send').disabled=false;save();renderMsgs();await refreshMe();
   if(c.msgs.includes(bot)&&bot.t!=='…'&&(PHOTO_RE.test(txt)||(Math.random()<.08&&ME&&ME.photosLeft!==0&&!/^(Ошибка|Нет связи)/.test(bot.t))))getPhoto(c,PHOTO_RE.test(txt)?txt:'')};
 
-/* ---------- фото ---------- */
 const PHOTO_RE=/(скинь|пришли|кинь|покажи|сделай|хочу|отправь)[^.!?]{0,25}(фото|фотк|селфи|снимок)/i;
 let pbusy=false;
 async function getPhoto(c,hint){if(pbusy)return;
@@ -296,12 +220,9 @@ async function getPhoto(c,hint){if(pbusy)return;
   catch(e){m.t='Нет связи с сервером: '+e.message}
   pbusy=false;save();renderMsgs();refreshMe()}
 $('ph').onclick=()=>{$('pt').value='';$('pd').showModal()};$('pc').onclick=()=>$('pd').close();$('pg').onclick=()=>{const t=$('pt').value.trim();$('pd').close();getPhoto(cur(),t)};
-
 async function boot(){
   if(!TOK)return showAuth();
   const r=await api('/api/state');if(r.status===401)return showAuth();
-  const j=await r.json().catch(()=>({}));S={chars:[],cur:null,adult:false,profile:null,...j};merge();save();setV('home');await refreshMe();renderTop();
-  if(!S.profile)openPf()}
+  const j=await r.json().catch(()=>({}));S={chars:[],cur:null,adult:false,...j};merge();save();render();refreshMe()}
 setMode(false);boot();
-if(/[?&]paid=1/.test(location.search)){history.replaceState(null,'','/');checkPay()}
 </script></body></html>
