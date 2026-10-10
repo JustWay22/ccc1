@@ -68,6 +68,8 @@ dialog::backdrop{background:rgba(0,0,0,.7)}dialog h3{margin-top:0}
 ::-webkit-scrollbar{width:8px}::-webkit-scrollbar-thumb{background:#2f2f3e;border-radius:8px}
 @media(max-width:760px){#side{position:fixed;inset:0 25% 0 0;z-index:5;transform:translateX(-100%);transition:transform .2s;width:auto}#side.open{transform:none}
 #menu,#xs{display:inline-block}#top{padding:10px}#home{padding:14px}#grid{grid-template-columns:repeat(2,1fr);gap:10px}.m{max-width:88%}header{padding:8px 10px}}
+.sc{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid var(--bd);border-radius:14px;padding:14px}.sbg{color:#4ade80;font-size:12px;text-align:right;border:1px solid #14532d;background:#0f2417;border-radius:10px;padding:6px 10px;white-space:nowrap}.sbg b{font-size:15px}
+.sr{display:flex;justify-content:space-between;gap:10px;border:1px solid var(--bd);border-radius:12px;padding:10px 12px;margin-bottom:6px;font-size:14px}.sr span{color:var(--mu)}.sr i{font-style:normal;font-size:12px}.sok{color:#4ade80}.sbad{color:#fb7185}
 </style></head><body data-v="home">
 <div id="app">
 <nav id="side"><div class="logo"><b>✦ BestyChat</b><button class="g" id="xs">✕</button></div>
@@ -122,9 +124,9 @@ dialog::backdrop{background:rgba(0,0,0,.7)}dialog h3{margin-top:0}
 <div class="pl"><b>Plus · 499 ₽/мес</b><span>Полный доступ, без лимита сообщений. До 30 фото в месяц.</span><button data-plan="plus">Выбрать Plus</button></div>
 <div class="pl"><b>VIP · 990 ₽/мес</b><span>Развёрнутые ответы персонажей. До 200 фото в месяц.</span><button data-plan="vip">Выбрать VIP</button></div>
 <div class="pl"><b>SUPER · 2990 ₽/мес</b><span>Никаких ограничений.</span><button data-plan="super">Выбрать SUPER</button></div>
-<div id="ap-box" class="pl" style="display:none"><b id="ap-t"></b><span id="ap-s"></span><button class="g" id="ap-off">Отключить автоплатёж</button></div>
-<p class="tag" style="margin:10px 0">Оплата через ЮKassa. Тариф действует 30 дней и продлевается автоматически с привязанной карты каждые 30 дней, пока вы не нажмёте «Отключить автоплатёж» (это можно сделать в любой момент здесь же). Бесплатно: 25 сообщений и 3 фото в день.</p>
+<p class="tag" style="margin:10px 0">Оплата через ЮKassa. Тариф действует 30 дней. Если при оплате разрешить сохранить карту, он продлевается автоматически; отменить можно в любой момент в разделе «Моя подписка». Бесплатно: 25 сообщений и 3 фото в день.</p>
 <div class="row"><button class="g" id="sn">Закрыть</button></div></dialog>
+<dialog id="mysub" style="max-width:560px"><h3 style="margin-bottom:12px">Моя подписка</h3><div id="msb"></div><div class="row" style="margin-top:10px"><button class="g" id="msx">Закрыть</button></div></dialog>
 <dialog id="pd"><h3>🖼 Какое фото?</h3>
 <label>Опиши, что хочешь: одежда, поза, место. Можно оставить пустым, тогда персонаж выберет сам.</label>
 <textarea id="pt" rows="3" placeholder="Например: селфи в кафе, в красной куртке, улыбается"></textarea>
@@ -160,12 +162,20 @@ $('out').onclick=async()=>{try{await api('/api/logout',{method:'POST'})}catch(e)
 /* ---------- профиль-тариф ---------- */
 async function refreshMe(){try{const r=await api('/api/me');if(r.status===401)return showAuth();ME=await r.json();
   $('me').textContent='👤 '+ME.login+' · '+ME.planName+' · '+(ME.left<0?'сообщения ∞':'сообщений '+ME.left+'/'+ME.limit)+' · '+(ME.photosLeft<0?'фото ∞':'фото '+ME.photosLeft+'/'+ME.photoLimit+(ME.photoPer==='month'?' в мес.':' в день'));
-  $('nsub').textContent=ME.sub?'⭐ Тариф / автоплатёж':'⭐ Тарифы';
-  const ab=$('ap-box');ab.style.display=ME.sub?'':'none';
-  if(ME.sub){const d=new Date(ME.until).toLocaleDateString('ru-RU');$('ap-t').textContent=ME.auto?'🔁 Автоплатёж включён':'Автоплатёж отключён';
-    $('ap-s').textContent=ME.auto?'Следующее списание около '+d+'.':'Тариф действует до '+d+', потом вернётся бесплатный.';$('ap-off').style.display=ME.auto?'':'none'}}catch(e){}}
-$('ap-off').onclick=async()=>{if(!confirm('Отключить автоплатёж? Тариф продолжит действовать до конца оплаченного срока.'))return;const r=await api('/api/autopay/off',{method:'POST'});if(!r.ok)return alert('Ошибка '+r.status);await refreshMe();alert('Автоплатёж отключён')};
-$('nsub').onclick=()=>{$('side').classList.remove('open');$('sub').showModal()};$('sn').onclick=()=>$('sub').close();
+  $('nsub').textContent=ME.sub?'⭐ Моя подписка':'⭐ Тарифы'}catch(e){}}
+$('nsub').onclick=async()=>{$('side').classList.remove('open');if(ME&&ME.sub){await refreshMe();allH=false;renderSub();$('mysub').showModal()}else $('sub').showModal()};$('sn').onclick=()=>$('sub').close();$('msx').onclick=()=>$('mysub').close();
+const fd=t=>new Date(t).toLocaleDateString('ru-RU'),PD={plus:'Полный доступ, без лимита сообщений. До 30 фото в месяц.',vip:'Развёрнутые ответы персонажей. До 200 фото в месяц.',super:'Никаких ограничений.'};let allH=false;
+function renderSub(){const m=ME;if(!m||!m.sub)return;
+  const row=(k,v)=>`<div class="sr"><span>${k}</span><b>${v}</b></div>`,H=m.hist||[],L=allH?H:H.slice(0,5);
+  $('msb').innerHTML=`<div class="sc"><div><b style="font-size:19px">${m.planName}</b><div class="tag" style="text-align:left;margin:2px 0 0;font-size:13px">${PD[m.plan]||''}</div></div><div class="sbg">Активна до<br><b>${fd(m.until)}</b></div></div>
+<div class="row" style="justify-content:flex-start;margin:12px 0"><button id="msch">Изменить план подписки</button>${m.auto?'<button class="g" id="mscn">Отменить подписку</button>':''}</div>
+${m.canceled?'<p class="tag" style="text-align:left">Подписка отменена. Доступ сохранится до '+fd(m.until)+', списаний больше не будет.</p>':''}
+${row('Дата оформления',m.since?fd(m.since):'—')}${row('Дата следующего списания',m.auto?fd(m.until):'—')}${row('Способ оплаты',m.pm||'—')}
+<h4 style="margin:14px 0 6px">История платежей</h4>${L.length?L.map(h=>`<div class="sr"><span>${fd(h.t)}</span><b>${h.a} ₽</b><i class="${h.st==='ok'?'sok':'sbad'}">${h.st==='ok'?'оплачено':'отклонён'}</i></div>`).join(''):'<p class="tag">Платежей пока нет</p>'}${H.length>5&&!allH?'<button class="lnk" id="msall">Показать все платежи →</button>':''}`;
+  $('msch').onclick=()=>{$('mysub').close();$('sub').showModal()};
+  if($('mscn'))$('mscn').onclick=async()=>{if(!confirm('Отменить подписку? Доступ сохранится до '+fd(m.until)+', дальше списаний не будет.'))return;const r=await api('/api/subscription/cancel',{method:'POST'});if(!r.ok)return alert('Ошибка '+r.status);await refreshMe();renderSub()};
+  if($('msall'))$('msall').onclick=()=>{allH=true;renderSub()}}
+
 document.querySelectorAll('[data-plan]').forEach(b=>b.onclick=async()=>{const r=await api('/api/subscribe',{method:'POST',body:JSON.stringify({plan:b.dataset.plan})});const j=await r.json().catch(()=>({}));if(!r.ok)return alert(j.error||'Ошибка '+r.status);if(j.confirmation_url){location.href=j.confirmation_url;return}$('sub').close();refreshMe()});
 async function checkPay(){if(!TOK)return;for(let i=0;i<6;i++){const r=await api('/api/pay/check',{method:'POST'}),j=await r.json().catch(()=>({}));
   if(j.status==='succeeded'){await refreshMe();return alert('Оплата прошла! Тариф '+j.planName+' активен 🎉')}
