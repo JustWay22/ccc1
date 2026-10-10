@@ -2,7 +2,7 @@
 const fs=require('fs'),path=require('path'),crypto=require('crypto');
 const {API_KEY='',BASE_URL='https://api.deepseek.com',MODEL='deepseek-chat',DAILY_LIMIT=25,PHOTO_LIMIT=3,
   REPLICATE_API_TOKEN:REPL='',IMAGE_MODEL='black-forest-labs/flux-schnell',FREE_SUBS='0',
-  YOOKASSA_SHOP_ID='',YOOKASSA_SECRET_KEY='',SITE_URL=''}=process.env;
+  YOOKASSA_SHOP_ID='',YOOKASSA_SECRET_KEY='live_EOHp7t7jp65788TeJEsaTbarYfGPaPwYnP-SJqz9bsc',SITE_URL='',CRON_SECRET=''}=process.env;
 
 // ---- Тарифы. Бесплатный: лимиты в день. Платные: фото считаются в месяц. Infinity = без ограничений ----
 const PLANS={
@@ -41,7 +41,7 @@ async function session(u){const t=crypto.randomBytes(32).toString('hex');await k
 const planOf=u=>u.plan&&u.until>Date.now()&&PLANS[u.plan]?u.plan:'free';
 function info(u){const pk=planOf(u),P=PLANS[pk],d=today(),key=P.per==='day'?d:d.slice(0,7);
   if(u.used?.d!==d)u.used={d,n:0};if(u.photos?.k!==key)u.photos={k:key,n:0};
-  return{login:u.login,plan:pk,planName:P.n,sub:pk!=='free',until:u.until||0,
+  return{login:u.login,plan:pk,planName:P.n,sub:pk!=='free',until:u.until||0,auto:!!(u.auto&&u.pm),
     limit:P.msg===Infinity?-1:P.msg,left:P.msg===Infinity?-1:Math.max(0,P.msg-u.used.n),
     photoLimit:P.ph===Infinity?-1:P.ph,photosLeft:P.ph===Infinity?-1:Math.max(0,P.ph-u.photos.n),photoPer:P.per}}
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -58,9 +58,27 @@ async function activate(pid){
   const p=await yk('GET','/payments/'+pid);rec.status=p.status;
   if(p.status==='succeeded'&&p.paid&&p.amount?.currency==='RUB'&&+p.amount.value===PLANS[rec.plan]?.price){
     rec.done=1;await kv.set('pay:'+pid,rec);
-    const u=await kv.get('u:'+rec.login);if(u){const base=planOf(u)===rec.plan?u.until:Date.now();u.plan=rec.plan;u.until=base+30*864e5;await saveU(u)}
-  }else if(p.status==='canceled'){rec.done=1;await kv.set('pay:'+pid,rec)}
+    const u=await kv.get('u:'+rec.login);if(u){const base=planOf(u)===rec.plan?u.until:Date.now();u.plan=rec.plan;u.until=base+30*864e5;
+      if(p.payment_method?.saved&&p.payment_method.id&&!rec.renew){u.pm=p.payment_method.id;u.auto=1;await autoList(rec.login,true)}
+      await saveU(u)}
+  }else if(p.status==='canceled'){rec.done=1;await kv.set('pay:'+pid,rec);
+    if(rec.renew){const u=await kv.get('u:'+rec.login);if(u){u.auto=0;delete u.pm;await saveU(u);await autoList(rec.login,false)}} // автосписание не прошло: отключаем
+  }
   return rec}
+// Список пользователей с автоплатежом (для ежедневного продления)
+async function autoList(login,on){const a=(await kv.get('auto:list'))||[],i=a.indexOf(login);
+  if(on&&i<0)a.push(login);if(!on&&i>=0)a.splice(i,1);await kv.set('auto:list',a)}
+// Автосписание за следующий период по сохранённому способу оплаты (если до конца тарифа меньше суток)
+async function renew(u){
+  const P=PLANS[u.plan];if(!YK||!u.auto||!u.pm||!P||!P.price)return;
+  if((u.until||0)-Date.now()>864e5)return;
+  if(Date.now()-(u.renewTry||0)<6*36e5)return; // не чаще раза в 6 часов, чтобы не списать дважды
+  u.renewTry=Date.now();await saveU(u);
+  const lg=u.login.toLowerCase();
+  const pay=await yk('POST','/payments',{amount:{value:P.price.toFixed(2),currency:'RUB'},capture:true,payment_method_id:u.pm,
+    description:('BestyChat '+P.n+', автопродление ('+u.login+')').slice(0,128),metadata:{login:lg,plan:u.plan,renew:1}});
+  await kv.set('pay:'+pay.id,{login:lg,plan:u.plan,t:Date.now(),renew:1});
+  await activate(pay.id)}
 
 module.exports=async(req,res)=>{
   const url=req.url.split('?')[0],POST=req.method==='POST';
@@ -71,6 +89,11 @@ module.exports=async(req,res)=>{
     if(url.startsWith('/api/img/')){const n=url.slice(9),b=/^[a-f0-9]{24}\.jpg$/.test(n)&&await kv.get('img:'+n);
       if(!b){res.writeHead(404);return res.end()}
       res.writeHead(200,{'Content-Type':'image/jpeg','Cache-Control':'public,max-age=31536000'});return res.end(Buffer.from(b,'base64'))}
+    if(url==='/api/cron/renew'){ // раз в сутки вызывается Vercel Cron (нужна переменная CRON_SECRET)
+      if(!CRON_SECRET||req.headers.authorization!=='Bearer '+CRON_SECRET)return send(res,401,{error:'auth'});
+      let n=0;for(const lg of (await kv.get('auto:list'))||[]){const u=await kv.get('u:'+lg);if(!u||!u.auto){await autoList(lg,false);continue}
+        try{await renew(u);n++}catch(e){console.log('cron renew',lg,e.message)}}
+      return send(res,200,{checked:n})}
     if(url==='/api/register'&&POST){
       const {login='',password=''}=await body(req,1e4),k=String(login).trim().toLowerCase();
       if(!/^[a-z0-9_.@-]{3,40}$/.test(k))return send(res,400,{error:'Логин: 3–40 символов, латиница, цифры, _ . @ -'});
@@ -93,7 +116,8 @@ module.exports=async(req,res)=>{
     if(url.startsWith('/api/')){
       const t=(req.headers.authorization||'').replace('Bearer ',''),l=t&&await kv.get('s:'+t),u=l&&await kv.get('u:'+l);
       if(!u)return send(res,401,{error:'auth'});
-      if(url==='/api/me')return send(res,200,info(u));
+      if(url==='/api/me'){try{await renew(u)}catch(e){console.log('renew:',e.message)};return send(res,200,info((await kv.get('u:'+l))||u))}
+      if(url==='/api/autopay/off'&&POST){u.auto=0;delete u.pm;await saveU(u);await autoList(l,false);return send(res,200,info(u))}
       if(url==='/api/logout'){await kv.del('s:'+t);return send(res,200,{})}
       if(url==='/api/state'){
         if(req.method==='PUT'){await kv.set('st:'+u.id,await body(req));return send(res,200,{ok:1})}
@@ -102,10 +126,10 @@ module.exports=async(req,res)=>{
       if(url==='/api/subscribe'&&POST){ // FREE_SUBS=1 — тариф бесплатно (для тестов), иначе оплата через ЮKassa
         const {plan:pk}=await body(req,1e3);
         if(!PLANS[pk]||pk==='free')return send(res,400,{error:'Неизвестный тариф'});
-        if(FREE_SUBS==='1'){u.plan=pk;u.until=Date.now()+30*864e5;await saveU(u);return send(res,200,info(u))}
+        if(FREE_SUBS==='1'&&!YK){u.plan=pk;u.until=Date.now()+30*864e5;await saveU(u);return send(res,200,info(u))}
         if(!YK)return send(res,503,{error:'Оплата не настроена (нет YOOKASSA_SHOP_ID / YOOKASSA_SECRET_KEY)'});
         const site=(SITE_URL||((req.headers['x-forwarded-proto']||'http').split(',')[0]+'://'+req.headers.host)).replace(/\/$/,''),P=PLANS[pk],lg=u.login.toLowerCase();
-        const pay=await yk('POST','/payments',{amount:{value:P.price.toFixed(2),currency:'RUB'},capture:true,
+        const pay=await yk('POST','/payments',{amount:{value:P.price.toFixed(2),currency:'RUB'},capture:true,save_payment_method:true,
           confirmation:{type:'redirect',return_url:site+'/?paid=1'},
           description:('BestyChat '+P.n+', 30 дней ('+u.login+')').slice(0,128),metadata:{login:lg,plan:pk}});
         await kv.set('pay:'+pay.id,{login:lg,plan:pk,t:Date.now()});u.pay=pay.id;await saveU(u);

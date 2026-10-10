@@ -2,5 +2,7 @@
 chcp 65001 >nul
 set API_KEY=ВСТАВЬ_КЛЮЧ_DEEPSEEK
 set REPLICATE_API_TOKEN=ВСТАВЬ_ТОКЕН_REPLICATE
+set YOOKASSA_SHOP_ID=ВСТАВЬ_SHOP_ID_ЮKASSA
+set YOOKASSA_SECRET_KEY=live_EOHp7t7jp65788TeJEsaTbarYfGPaPwYnP-SJqz9bsc
 node server.cjs
 pause

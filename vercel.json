@@ -1,1 +1,1 @@
-{"outputDirectory":"public","functions":{"api/[...all].js":{"maxDuration":120,"includeFiles":"public/**"}}}
+{"outputDirectory":"public","functions":{"api/[...all].js":{"maxDuration":120,"includeFiles":"public/**"}},"crons":[{"path":"/api/cron/renew","schedule":"0 6 * * *"}]}
