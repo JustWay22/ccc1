@@ -122,7 +122,8 @@ dialog::backdrop{background:rgba(0,0,0,.7)}dialog h3{margin-top:0}
 <div class="pl"><b>Plus · 499 ₽/мес</b><span>Полный доступ, без лимита сообщений. До 30 фото в месяц.</span><button data-plan="plus">Выбрать Plus</button></div>
 <div class="pl"><b>VIP · 990 ₽/мес</b><span>Развёрнутые ответы персонажей. До 200 фото в месяц.</span><button data-plan="vip">Выбрать VIP</button></div>
 <div class="pl"><b>SUPER · 2990 ₽/мес</b><span>Никаких ограничений.</span><button data-plan="super">Выбрать SUPER</button></div>
-<p class="tag" style="margin:10px 0">Оплата через ЮKassa: банковские карты, СБП и другие способы. Тариф действует 30 дней. Бесплатно: 25 сообщений и 3 фото в день.</p>
+<div id="ap-box" class="pl"><b id="ap-t">🔁 Автоплатёж</b><span id="ap-s">Продление тарифа с привязанной карты.</span><button class="g" id="ap-off">Отключить автоплатёж и отвязать карту</button></div>
+<p class="tag" style="margin:10px 0">Оплата через ЮKassa. Тариф действует 30 дней и продлевается автоматически с привязанной карты каждые 30 дней, пока вы не нажмёте «Отключить автоплатёж» (это можно сделать в любой момент здесь же). Бесплатно: 25 сообщений и 3 фото в день.</p>
 <div class="row"><button class="g" id="sn">Закрыть</button></div></dialog>
 <dialog id="pd"><h3>🖼 Какое фото?</h3>
 <label>Опиши, что хочешь: одежда, поза, место. Можно оставить пустым, тогда персонаж выберет сам.</label>
@@ -159,7 +160,11 @@ $('out').onclick=async()=>{try{await api('/api/logout',{method:'POST'})}catch(e)
 /* ---------- профиль-тариф ---------- */
 async function refreshMe(){try{const r=await api('/api/me');if(r.status===401)return showAuth();ME=await r.json();
   $('me').textContent='👤 '+ME.login+' · '+ME.planName+' · '+(ME.left<0?'сообщения ∞':'сообщений '+ME.left+'/'+ME.limit)+' · '+(ME.photosLeft<0?'фото ∞':'фото '+ME.photosLeft+'/'+ME.photoLimit+(ME.photoPer==='month'?' в мес.':' в день'));
-  $('nsub').textContent=ME.sub?'⭐ Сменить тариф':'⭐ Тарифы'}catch(e){}}
+  $('nsub').textContent=ME.sub?'⭐ Тариф / автоплатёж':'⭐ Тарифы';
+  const d=ME.until?new Date(ME.until).toLocaleDateString('ru-RU'):'';
+  $('ap-t').textContent=ME.auto?'🔁 Автоплатёж включён':'🔁 Автоплатёж отключён';
+  $('ap-s').textContent=ME.auto?'Следующее списание около '+d+'. Карта привязана.':(ME.sub?'Тариф действует до '+d+', потом вернётся бесплатный. Карта не привязана.':'Карта не привязана, автосписаний нет.')}catch(e){}}
+$('ap-off').onclick=async()=>{if(!confirm('Отключить автоплатёж и отвязать карту? Тариф (если он есть) продолжит действовать до конца оплаченного срока.'))return;const r=await api('/api/autopay/off',{method:'POST'});if(!r.ok)return alert('Ошибка '+r.status);await refreshMe();alert('Готово: автоплатёж отключён, карта отвязана. Больше списаний не будет.')};
 $('nsub').onclick=()=>{$('side').classList.remove('open');$('sub').showModal()};$('sn').onclick=()=>$('sub').close();
 document.querySelectorAll('[data-plan]').forEach(b=>b.onclick=async()=>{const r=await api('/api/subscribe',{method:'POST',body:JSON.stringify({plan:b.dataset.plan})});const j=await r.json().catch(()=>({}));if(!r.ok)return alert(j.error||'Ошибка '+r.status);if(j.confirmation_url){location.href=j.confirmation_url;return}$('sub').close();refreshMe()});
 async function checkPay(){if(!TOK)return;for(let i=0;i<6;i++){const r=await api('/api/pay/check',{method:'POST'}),j=await r.json().catch(()=>({}));
